@@ -24,3 +24,4 @@ jobs:
                   terraform init -backend-config="bucket=${{ vars.GCP_PROJECT_ID }}-tf-state"
                   terraform apply -auto-approve -var="project_id=${{ vars.GCP_PROJECT_ID }}"
               working-directory: ./infrastructure/environments/prod
+#

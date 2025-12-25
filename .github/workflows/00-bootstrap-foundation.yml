@@ -1,7 +1,7 @@
 name: "00 - Bootstrap Foundation"
 
 on:
-    workflow_dispatch: # Allows you to trigger this manually from the GitHub Actions UI
+    workflow_dispatch: # Allows manual trigger from the GitHub UI
 
 jobs:
     bootstrap:
@@ -9,19 +9,24 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
-            - name: "Authenticate with Temporary Key"
+            # Log in using your manual JSON key (Temporary)
+            - name: "Authenticate to Google Cloud"
               uses: "google-github-actions/auth@v2"
               with:
-                  credentials_json: "${{ secrets.GCP_SA_KEY }}" # Uses the manual JSON key
+                  credentials_json: "${{ secrets.GCP_SA_KEY }}"
 
-            - name: "Run Bootstrap Script"
+            # Fix for the 'gsutil' credential error you encountered
+            - name: "Set Gcloud Project Context"
+              run: gcloud config set project ${{ vars.GCP_PROJECT_ID }}
+
+            - name: "Execute Bootstrap Script"
               run: |
                   chmod +x scripts/bootstrap.sh
                   ./scripts/bootstrap.sh ${{ vars.GCP_PROJECT_ID }}
 
-            - name: "Terraform Init & Apply"
+            - name: "Initial Terraform Apply (WIF Bridge)"
               run: |
+                  # The -backend-config flag tells Terraform where to save its state
                   terraform init -backend-config="bucket=${{ vars.GCP_PROJECT_ID }}-tf-state"
                   terraform apply -auto-approve -var="project_id=${{ vars.GCP_PROJECT_ID }}"
               working-directory: ./infrastructure/environments/prod
-#

@@ -1,0 +1,17 @@
+name: "Identity Verification"
+on: [push]
+jobs:
+    verify:
+        runs-on: ubuntu-latest
+        permissions:
+            id-token: write # Required for keyless OIDC
+            contents: read
+        steps:
+            - uses: actions/checkout@v4
+            - name: "Auth Keyless"
+              uses: "google-github-actions/auth@v2"
+              with:
+                  workload_identity_provider: ${{ vars.WIF_PROVIDER_ID }}
+                  service_account: platform-automation-sa@${{ vars.GCP_PROJECT_ID }}.iam.gserviceaccount.com
+            - name: "Proof"
+              run: gcloud storage ls # Prove access without JSON keys!

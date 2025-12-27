@@ -1,37 +1,24 @@
 name: "00 - Bootstrap Foundation"
-
-on:
-    workflow_dispatch: # Allows manual trigger from the GitHub UI
-
+on: workflow_dispatch
 jobs:
-    bootstrap:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
+  bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Auth with Temporary Key"
+        uses: "google-github-actions/auth@v2"
+        with:
+          credentials_json: "${{ secrets.GCP_SA_KEY }}"
 
-            # Log in using your manual JSON key (Temporary)
-            - name: "Authenticate to Google Cloud"
-              uses: "google-github-actions/auth@v2"
-              with:
-                  credentials_json: "${{ secrets.GCP_SA_KEY }}"
+      - name: "Set up Cloud SDK"
+        uses: "google-github-actions/setup-gcloud@v2"
+        with:
+          project_id: ${{ vars.GCP_PROJECT_ID }}
 
-            - name: "Set up Cloud SDK"
-              uses: "google-github-actions/setup-gcloud@v2"
-              with:
-                  project_id: ${{ vars.GCP_PROJECT_ID }}
-
-            # Fix for the 'gsutil' credential error you encountered
-            - name: "Set Gcloud Project Context"
-              run: gcloud config set project ${{ vars.GCP_PROJECT_ID }}
-
-            - name: "Execute Bootstrap Script"
-              run: |
-                  chmod +x scripts/bootstrap.sh
-                  ./scripts/bootstrap.sh ${{ vars.GCP_PROJECT_ID }}
-
-            - name: "Initial Terraform Apply (WIF Bridge)"
-              run: |
-                  # The -backend-config flag tells Terraform where to save its state
-                  terraform init -backend-config="bucket=${{ vars.GCP_PROJECT_ID }}-tf-state"
-                  terraform apply -auto-approve -var="project_id=${{ vars.GCP_PROJECT_ID }}"
-              working-directory: ./infrastructure/environments/prod
+      - name: "Execute Bootstrap"
+        run: |
+          chmod +x scripts/bootstrap.sh
+          ./scripts/bootstrap.sh ${{ vars.GCP_PROJECT_ID }}
+          terraform init -backend-config="bucket=${{ vars.GCP_PROJECT_ID }}-tf-state"
+          terraform apply -auto-approve -var="project_id=${{ vars.GCP_PROJECT_ID }}"
+        working-directory: ./infrastructure/environments/prod

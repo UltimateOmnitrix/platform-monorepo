@@ -1,9 +1,0 @@
-name: "infra-pipeline"
-on:
-    workflow_dispatch: # This gives it a manual trigger so it stops failing on push
-
-jobs:
-    placeholder:
-        runs-on: ubuntu-latest
-        steps:
-            - run: echo "This is a placeholder until Day 2"

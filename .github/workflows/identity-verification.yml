@@ -1,40 +1,30 @@
-name: "Identity Verification"
-
-# Trigger on every push to the main branch to ensure the link is always alive
+name: "00 - Bootstrap Foundation"
 on:
-    push:
-        branches: [main]
-    workflow_dispatch: # Allows you to trigger it manually from the Actions tab
+    workflow_dispatch:
 
 jobs:
-    verify-connection:
+    bootstrap:
         runs-on: ubuntu-latest
-        # CRITICAL: These permissions are required to request the OIDC token from GitHub
-        permissions:
-            id-token: write
-            contents: read
-
         steps:
-            - name: "Checkout Repository"
-              uses: "actions/checkout@v4"
+            - uses: actions/checkout@v4
 
-            - name: "Authenticate to Google Cloud (Keyless)"
-              id: "auth"
+            - name: "Authenticate to Google Cloud"
               uses: "google-github-actions/auth@v2"
               with:
-                  # This variable MUST contain the full 'projects/...' string
-                  workload_identity_provider: "${{ vars.WIF_PROVIDER_ID }}"
-                  # This links to the Service Account created in Phase 1
-                  service_account: "platform-automation-sa@${{ vars.GCP_PROJECT_ID }}.iam.gserviceaccount.com"
+                  # This is where your new JSON key goes
+                  credentials_json: "${{ secrets.GCP_SA_KEY }}"
 
             - name: "Set up Cloud SDK"
               uses: "google-github-actions/setup-gcloud@v2"
               with:
                   project_id: "${{ vars.GCP_PROJECT_ID }}"
 
-            - name: "Proof of Access"
+            - name: "Run Foundation Logic"
               run: |
-                  echo "🚀 Testing keyless access to Google Cloud..."
-                  # This command lists your buckets to prove you have 'Owner' or 'Storage Admin' rights
-                  gcloud storage buckets list --project="${{ vars.GCP_PROJECT_ID }}"
-                  echo "✅ Identity Verification Successful!"
+                  # 1. Enable APIs first
+                  gcloud services enable cloudresourcemanager.googleapis.com iam.googleapis.com sts.googleapis.com --project="${{ vars.GCP_PROJECT_ID }}"
+
+                  # 2. Run Terraform to create the Pool
+                  cd infrastructure/environments/prod
+                  terraform init -backend-config="bucket=${{ vars.GCP_PROJECT_ID }}-tf-state"
+                  terraform apply -auto-approve -var="project_id=${{ vars.GCP_PROJECT_ID }}"

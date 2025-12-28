@@ -1,24 +1,30 @@
 name: "00 - Bootstrap Foundation"
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+
 jobs:
   bootstrap:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: "Auth with Temporary Key"
+
+      - name: "Authenticate to Google Cloud"
         uses: "google-github-actions/auth@v2"
         with:
+          # This is where your new JSON key goes
           credentials_json: "${{ secrets.GCP_SA_KEY }}"
 
       - name: "Set up Cloud SDK"
         uses: "google-github-actions/setup-gcloud@v2"
         with:
-          project_id: ${{ vars.GCP_PROJECT_ID }}
+          project_id: "${{ vars.GCP_PROJECT_ID }}"
 
-      - name: "Execute Bootstrap"
+      - name: "Run Foundation Logic"
         run: |
-          chmod +x scripts/bootstrap.sh
-          ./scripts/bootstrap.sh ${{ vars.GCP_PROJECT_ID }}
+          # 1. Enable APIs first
+          gcloud services enable cloudresourcemanager.googleapis.com iam.googleapis.com sts.googleapis.com --project="${{ vars.GCP_PROJECT_ID }}"
+
+          # 2. Run Terraform to create the Pool
+          cd infrastructure/environments/prod
           terraform init -backend-config="bucket=${{ vars.GCP_PROJECT_ID }}-tf-state"
           terraform apply -auto-approve -var="project_id=${{ vars.GCP_PROJECT_ID }}"
-        working-directory: ./infrastructure/environments/prod

@@ -1,30 +1,40 @@
-name: "00 - Bootstrap Foundation"
+name: "Identity Verification"
+
+# Trigger on every push to main or manually to verify the link
 on:
+    push:
+        branches: [main]
     workflow_dispatch:
 
 jobs:
-    bootstrap:
+    verify:
         runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
+        # CRITICAL: These permissions allow GitHub to issue an OIDC token
+        permissions:
+            contents: "read"
+            id-token: "write"
 
-            - name: "Authenticate to Google Cloud"
+        steps:
+            - name: "Checkout Repository"
+              uses: "actions/checkout@v4"
+
+            - name: "Authenticate to Google Cloud (Keyless)"
+              id: "auth"
               uses: "google-github-actions/auth@v2"
               with:
-                  # This is where your new JSON key goes
-                  credentials_json: "${{ secrets.GCP_SA_KEY }}"
+                  # Use the full provider path from your GitHub variables
+                  workload_identity_provider: "${{ vars.WIF_PROVIDER_ID }}"
+                  # Use the automation service account email
+                  service_account: "platform-automation-sa@${{ vars.GCP_PROJECT_ID }}.iam.gserviceaccount.com"
 
             - name: "Set up Cloud SDK"
               uses: "google-github-actions/setup-gcloud@v2"
               with:
                   project_id: "${{ vars.GCP_PROJECT_ID }}"
 
-            - name: "Run Foundation Logic"
+            - name: "Proof of Access"
+              # If this step turns Green, your WIF Bridge is officially working
               run: |
-                  # 1. Enable APIs first
-                  gcloud services enable cloudresourcemanager.googleapis.com iam.googleapis.com sts.googleapis.com --project="${{ vars.GCP_PROJECT_ID }}"
-
-                  # 2. Run Terraform to create the Pool
-                  cd infrastructure/environments/prod
-                  terraform init -backend-config="bucket=${{ vars.GCP_PROJECT_ID }}-tf-state"
-                  terraform apply -auto-approve -var="project_id=${{ vars.GCP_PROJECT_ID }}"
+                  echo "🚀 Testing keyless access to GCP..."
+                  gcloud storage buckets list --project="${{ vars.GCP_PROJECT_ID }}"
+                  echo "✅ Identity Verification Successful!"

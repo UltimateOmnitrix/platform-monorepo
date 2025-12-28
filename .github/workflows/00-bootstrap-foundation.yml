@@ -12,7 +12,13 @@ jobs:
         with:
           credentials_json: "${{ secrets.GCP_SA_KEY }}"
 
-      - name: "Deploy Identity Pool"
+      # --- ADD THIS NEW STEP HERE ---
+      - name: "Setup Terraform"
+        uses: "hashicorp/setup-terraform@v3"
+        with:
+          terraform_version: "1.7.0" # Or your preferred version
+
+      - name: "Initial Terraform Apply (WIF Bridge)"
         run: |
           cd infrastructure/environments/prod
           terraform init -backend-config="bucket=${{ vars.GCP_PROJECT_ID }}-tf-state"

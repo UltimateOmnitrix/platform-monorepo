@@ -1,17 +1,40 @@
 name: "Identity Verification"
-on: [push]
+
+# Trigger on every push to the main branch to ensure the link is always alive
+on:
+    push:
+        branches: [main]
+    workflow_dispatch: # Allows you to trigger it manually from the Actions tab
+
 jobs:
-    verify:
+    verify-connection:
         runs-on: ubuntu-latest
+        # CRITICAL: These permissions are required to request the OIDC token from GitHub
         permissions:
-            id-token: write # Required for keyless OIDC
+            id-token: write
             contents: read
+
         steps:
-            - uses: actions/checkout@v4
-            - name: "Auth Keyless"
+            - name: "Checkout Repository"
+              uses: "actions/checkout@v4"
+
+            - name: "Authenticate to Google Cloud (Keyless)"
+              id: "auth"
               uses: "google-github-actions/auth@v2"
               with:
-                  workload_identity_provider: ${{ vars.WIF_PROVIDER_ID }}
-                  service_account: platform-automation-sa@${{ vars.GCP_PROJECT_ID }}.iam.gserviceaccount.com
-            - name: "Proof"
-              run: gcloud storage ls # Prove access without JSON keys!
+                  # This variable MUST contain the full 'projects/...' string
+                  workload_identity_provider: "${{ vars.WIF_PROVIDER_ID }}"
+                  # This links to the Service Account created in Phase 1
+                  service_account: "platform-automation-sa@${{ vars.GCP_PROJECT_ID }}.iam.gserviceaccount.com"
+
+            - name: "Set up Cloud SDK"
+              uses: "google-github-actions/setup-gcloud@v2"
+              with:
+                  project_id: "${{ vars.GCP_PROJECT_ID }}"
+
+            - name: "Proof of Access"
+              run: |
+                  echo "🚀 Testing keyless access to Google Cloud..."
+                  # This command lists your buckets to prove you have 'Owner' or 'Storage Admin' rights
+                  gcloud storage buckets list --project="${{ vars.GCP_PROJECT_ID }}"
+                  echo "✅ Identity Verification Successful!"

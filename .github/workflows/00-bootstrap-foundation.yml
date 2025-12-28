@@ -1,11 +1,13 @@
 name: "00 - Bootstrap Foundation"
-on: workflow_dispatch
+on:
+  workflow_dispatch: # Run manually from the Actions tab
 
 jobs:
   bootstrap:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: "Checkout Repository"
+        uses: "actions/checkout@v4"
 
       - name: "Authenticate to Google Cloud"
         uses: "google-github-actions/auth@v2"
@@ -17,17 +19,22 @@ jobs:
         with:
           project_id: "${{ vars.GCP_PROJECT_ID }}"
 
-      - name: "Execute Bootstrap Script"
-        run: |
-          chmod +x scripts/bootstrap.sh
-          ./scripts/bootstrap.sh ${{ vars.GCP_PROJECT_ID }}
-
       - name: "Setup Terraform"
         uses: "hashicorp/setup-terraform@v3"
         with:
           terraform_version: "1.7.0"
 
+      - name: "Execute Bootstrap Script"
+        # This script enables APIs and ensures the GCS bucket is ready
+        run: |
+          chmod +x scripts/bootstrap.sh
+          ./scripts/bootstrap.sh
+        env:
+          PROJECT_ID: "${{ vars.GCP_PROJECT_ID }}"
+          BUCKET_NAME: "${{ vars.GCP_PROJECT_ID }}-tf-state"
+
       - name: "Initial Terraform Apply (WIF Bridge)"
+        # This creates the Workload Identity Pool for keyless access
         run: |
           cd infrastructure/environments/prod
           terraform init -backend-config="bucket=${{ vars.GCP_PROJECT_ID }}-tf-state"

@@ -12,6 +12,8 @@ module "iam_wif" {
   # Call your tagged library module
   source     = "git::https://github.com/UltimateOmnitrix/terraform-modules.git//modules/iam?ref=v1.0.0"
   project_id = var.project_id
+
+  github_repo = "UltimateOmnitrix/platform-monorepo"
 }
 
 output "wif_provider_name" {

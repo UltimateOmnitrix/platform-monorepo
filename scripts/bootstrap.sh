@@ -1,11 +1,6 @@
 #!/bin/bash
 set -e
-PROJECT_ID=${1:-$PROJECT_ID}
-if [ -z "$PROJECT_ID" ]; then
-    echo "❌ Error: PROJECT_ID is not set. Pass it as an argument or set the environment variable."
-    exit 1
-fi
-
+PROJECT_ID=$1
 BUCKET_NAME="${PROJECT_ID}-tf-state"
 
 echo "🚀 Enabling Cloud APIs for $PROJECT_ID..."

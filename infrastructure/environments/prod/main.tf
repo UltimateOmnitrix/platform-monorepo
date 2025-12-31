@@ -13,7 +13,7 @@ module "iam_wif" {
   source     = "git::https://github.com/UltimateOmnitrix/terraform-modules.git//modules/iam?ref=v1.0.0"
   project_id = var.project_id
 
-  github_repo = "UltimateOmnitrix/platform-monorepo"
+  github_repo = var.github_repo
 }
 
 output "wif_provider_name" {

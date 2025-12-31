@@ -34,8 +34,7 @@ jobs:
           BUCKET_NAME: "${{ vars.GCP_PROJECT_ID }}-tf-state"
 
       - name: "Initial Terraform Apply (WIF Bridge)"
-        # This creates the Workload Identity Pool for keyless access
         run: |
           cd infrastructure/environments/prod
           terraform init -backend-config="bucket=${{ vars.GCP_PROJECT_ID }}-tf-state"
-          terraform apply -auto-approve -var="project_id=${{ vars.GCP_PROJECT_ID }}"
+          terraform apply -auto-approve -var-file="prod.tfvars"

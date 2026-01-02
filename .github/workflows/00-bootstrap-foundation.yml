@@ -29,7 +29,8 @@ jobs:
       - name: "Execute Bootstrap Script"
         run: |
           chmod +x scripts/bootstrap.sh
-          ./scripts/bootstrap.sh
+          # Pass the ID as an argument to force the script to see it
+          ./scripts/bootstrap.sh "${{ vars.GCP_PROJECT_ID }}"
         env:
           PROJECT_ID: "${{ vars.GCP_PROJECT_ID }}"
 

@@ -25,7 +25,7 @@ jobs:
                   # Use the full provider path from your GitHub variables
                   workload_identity_provider: "${{ vars.WIF_PROVIDER_ID }}"
                   # Use the automation service account email
-                  service_account: "platform-automation-sa@${{ vars.GCP_PROJECT_ID }}.iam.gserviceaccount.com"
+                  service_account: "platform-sa@${{ vars.GCP_PROJECT_ID }}.iam.gserviceaccount.com"
 
             - name: "Set up Cloud SDK"
               uses: "google-github-actions/setup-gcloud@v2"

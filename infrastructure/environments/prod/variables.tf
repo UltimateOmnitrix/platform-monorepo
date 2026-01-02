@@ -1,9 +1,9 @@
 variable "project_id" {
-  type = string
+  description = "The GCP Project ID"
+  type        = string
 }
 
-# YOU MUST ADD THIS BLOCK HERE
 variable "github_repo" {
-  description = "The GitHub repository to trust for WIF"
+  description = "The GitHub repository to trust"
   type        = string
 }

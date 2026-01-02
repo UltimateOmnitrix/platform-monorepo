@@ -1,6 +1,6 @@
 terraform {
-  required_version = "~> 1.14.3"
-  backend "gcs" {} # Initialized via CI
+  required_version = "~> 1.5" # or your version
+  backend "gcs" {}
 }
 
 provider "google" {
@@ -9,10 +9,10 @@ provider "google" {
 }
 
 module "iam_wif" {
-  # Call your tagged library module
-  source     = "git::https://github.com/UltimateOmnitrix/terraform-modules.git//modules/iam?ref=v1.0.0"
-  project_id = var.project_id
+  source = "github.com/UltimateOmnitrix/terraform-modules//modules/iam?ref=v1.0.0"
 
+  # PASSING THE VARIABLES
+  project_id  = var.project_id
   github_repo = var.github_repo
 }
 

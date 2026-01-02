@@ -36,6 +36,8 @@ jobs:
       - name: "Initial Terraform Apply (WIF Bridge)"
         run: |
           cd infrastructure/environments/prod
+          ls -la
+          cat main.tf
           terraform init -backend-config="bucket=${{ vars.GCP_PROJECT_ID }}-tf-state"
           terraform apply -auto-approve \
             -var="project_id=${{ vars.GCP_PROJECT_ID }}" \

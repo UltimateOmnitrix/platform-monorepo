@@ -1,44 +1,83 @@
+# ============================================================
+# RUN THIS FOR ONLY ONCE IN ENTIRE PROJECT,
+# ============================================================
+# This workflow bootstraps the cloud foundation by creating Terraform state storage and
+# establishing keyless GitHub-to-GCP authentication, enabling all future infrastructure
+#and deployment pipelines to run securely.
+#What this workflow achieves:
+#1. Uses a temporary service account key (only once)
+#2. Enables required GCP APIs
+#3. Creates a Terraform remote state bucket
+#4. Sets up IAM + Workload Identity Federation (WIF)
+#5. Makes future pipelines keyless & secure
+
 name: "00 - Bootstrap Foundation"
+
+#This mean it is triggered manually
 on:
   workflow_dispatch:
 
 jobs:
   bootstrap:
+    # Standard Linux runner for Terraform and gcloud
     runs-on: ubuntu-latest
+
+    # Minimal permissions for repo access and WIF setup
     permissions:
       contents: "read"
       id-token: "write"
 
     steps:
-      - name: "Checkout Repository"
+      # This one pulls the code from the repo which Gets Terraform files and scripts from the repo
+      - name: "Checkout Repository - checkout the code from the repo"
         uses: "actions/checkout@v4"
 
-      - name: "Authenticate (Skeleton Key)"
+      # Temporary key-based auth to bootstrap WIF (one-time use)
+      # This step lets Github authenticate to GCP with this secret json key
+      # that is stored in the repo secrets GCP_SA_KEY
+      - name: "Authenticate of Github with GCP"
         uses: "google-github-actions/auth@v2"
         with:
           credentials_json: "${{ secrets.GCP_SA_KEY }}"
 
-      - name: "Set up Cloud SDK"
+      # Install Google Cloud CLI for bootstrap operations
+      # these get installed (gcloud & gsutil) in the runner environment..
+      # gcloud: you can perform actions like enable API, IAM,
+      # gsutil : to create buckets & manage
+      - name: "Set up Cloud SDK & installs gcloud & gsutil"
         uses: "google-github-actions/setup-gcloud@v2"
 
-      - name: "Setup Terraform"
+      # Install Terraform with a fixed version
+      # We install the TF CLI on runner to perform actions like
+      # init, plan, apply
+      - name: "Setup Terraform CLI version 1.14.3"
         uses: "hashicorp/setup-terraform@v3"
         with:
-          terraform_version: "1.7.0"
+          terraform_version: "1.14.3"
 
-      - name: "Execute Bootstrap Script"
+      # Create Terraform state bucket and enable required APIs
+      # chmod +x: makes this script as executable makes the runner as
+      # this file is for execution
+
+      # env is for passing to the script
+      - name: "Execute Bootstrap Script from /scripts/bootstrap.sh"
         run: |
           chmod +x scripts/bootstrap.sh
-          # Pass the ID as an argument to force the script to see it
           ./scripts/bootstrap.sh "${{ vars.GCP_PROJECT_ID }}"
         env:
           PROJECT_ID: "${{ vars.GCP_PROJECT_ID }}"
 
+      # Initialize Terraform and deploy IAM + Workload Identity Federation
+      # terraform inti starts and reads all the .tf files in /prod directory
+      # -backend-config is for passing the bucket details at the run time..
+      # -backend-config="bucket=..." and thsi is a predefined keyword ok
+      # this way it allows CI/CD to inject at runtime...
+
+      # terraform apply -auto-approve -var-file="prod.tfvars"
+      # loads variable values from prod.tfvars file and injects prod-specific values
+      # liike GCP project id and github repo name
       - name: "Initial Terraform Apply (WIF Bridge)"
         run: |
           cd infrastructure/environments/prod
-          # Initialize Terraform
           terraform init -backend-config="bucket=${{ vars.GCP_PROJECT_ID }}-tf-state"
-
-          # Apply using the .tfvars file
           terraform apply -auto-approve -var-file="prod.tfvars"

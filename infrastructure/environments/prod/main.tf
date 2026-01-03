@@ -26,7 +26,7 @@ provider "google" {
 
 module "iam_wif" {
   source = "github.com/UltimateOmnitrix/terraform-modules//modules/iam?ref=main"
-  # version = "1.0.0"
+  # version = "1.0.0" !! NEED TO Work on this 
 
   # PASSING THE VARIABLES
   project_id  = var.project_id

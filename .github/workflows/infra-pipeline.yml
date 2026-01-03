@@ -1,9 +1,66 @@
-name: "infra-pipeline"
+name: "Infrastructure Pipeline"
+
 on:
+    push:
+        branches: ["main"]
+        paths:
+            - "infrastructure/**"
+            - "modules/**"
+    pull_request:
+        branches: ["main"]
+        paths:
+            - "infrastructure/**"
+            - "modules/**"
     workflow_dispatch:
 
+permissions:
+    contents: read
+    id-token: write
+
+env:
+    TF_VERSION: "1.5.7"
+    # Point to your production environment
+    WORKING_DIR: "infrastructure/environments/prod"
+
 jobs:
-    placeholder:
+    terraform:
+        name: "Terraform"
         runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: ${{ env.WORKING_DIR }}
+
         steps:
-            - run: echo "Placeholder pipeline until Day 2"
+            - name: "Checkout"
+              uses: actions/checkout@v4
+
+            # 1. Authenticate to Google Cloud using WIF (Day 1 Success)
+            - name: "Authenticate to Google Cloud"
+              uses: google-github-actions/auth@v2
+              with:
+                  workload_identity_provider: "${{ vars.WIF_PROVIDER_ID }}"
+                  service_account: "platform-sa@${{ vars.GCP_PROJECT_ID }}.iam.gserviceaccount.com"
+
+            # 2. Setup Terraform
+            - name: "Setup Terraform"
+              uses: hashicorp/setup-terraform@v3
+              with:
+                  terraform_version: ${{ env.TF_VERSION }}
+
+            # 3. Initialize (Connect to GCS State Bucket)
+            - name: "Terraform Init"
+              run: |
+                  terraform init \
+                    -backend-config="bucket=${{ vars.GCP_PROJECT_ID }}-tf-state"
+
+            # 4. Plan (The "View" - Shows you what will change)
+            - name: "Terraform Plan"
+              id: plan
+              run: |
+                  terraform plan -no-color -var-file="prod.tfvars"
+
+            # 5. Apply (The "Action" - Only on Main Branch)
+            - name: "Terraform Apply"
+              if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+              run: |
+                  terraform apply -auto-approve -var-file="prod.tfvars"

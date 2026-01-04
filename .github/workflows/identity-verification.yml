@@ -1,3 +1,27 @@
+# ============================================================
+# IDENTITY VERIFICATION WORKFLOW
+# ============================================================
+# Purpose:
+# This workflow validates that Workload Identity Federation (WIF)
+# between GitHub Actions and Google Cloud Platform is configured
+# correctly and functioning as expected.
+#
+# What this workflow proves:
+# - GitHub Actions can authenticate to GCP using OIDC (keyless)
+# - No service account JSON keys are required
+# - The Workload Identity Provider and IAM bindings are working
+# - The GitHub repository is correctly trusted by GCP
+#
+# Outcome:
+# If this workflow completes successfully (green), the OIDC + WIF
+# bridge is confirmed to be operational and ready for use by
+# all future CI/CD pipelines.
+#
+# Note:
+# This workflow does NOT create or modify infrastructure.
+# It only performs a safe access check to verify identity and permissions.
+# ============================================================
+
 name: "Identity Verification"
 
 # Trigger on every push to main or manually to verify the link

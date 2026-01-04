@@ -5,7 +5,7 @@
 # establishing keyless GitHub-to-GCP authentication, enabling all future infrastructure
 #and deployment pipelines to run securely.
 #What this workflow achieves:
-#1. Uses a temporary service account key (only once)
+#1. Uses a service account key which is platformproject json key in here (only once)
 #2. Enables required GCP APIs
 #3. Creates a Terraform remote state bucket
 #4. Sets up IAM + Workload Identity Federation (WIF)

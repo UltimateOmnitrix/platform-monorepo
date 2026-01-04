@@ -24,9 +24,14 @@ provider "google" {
   region  = "us-central1"
 }
 
+# IN this it tf downloads the module code, reads it variables defintions, 
+# and injects values passed from var.project_id into project_id.... 
+# left one is variable of module (project_id) mean it is from the modules/iam/iamModulevariables.tf 
+# right one is variable of env/prod/prod.tfvars 
 module "iam_wif" {
   source = "github.com/UltimateOmnitrix/terraform-modules//modules/iam?ref=main"
   # version = "1.0.0" !! NEED TO Work on this 
+  # and work on DataLook up too 
 
   # PASSING THE VARIABLES
   project_id  = var.project_id

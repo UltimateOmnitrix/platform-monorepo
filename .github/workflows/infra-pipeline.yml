@@ -1,3 +1,24 @@
+# ============================================================
+# INFRASTRUCTURE PIPELINE
+# ============================================================
+# Purpose:
+# This workflow manages the continuous deployment of Google Cloud
+# infrastructure using Terraform. It automatically plans and applies
+# infrastructure changes whenever Terraform code is updated.
+#
+# What this workflow does:
+# - Authenticates GitHub Actions to GCP using OIDC and Workload Identity Federation (keyless)
+# - Initializes Terraform with a remote GCS backend for state management
+# - Generates a Terraform execution plan for infrastructure changes
+# - Applies approved infrastructure changes to the production environment
+#
+# Execution Behavior:
+# - On pull requests: runs `terraform plan` for review (no changes applied)
+# - On push to the main branch: runs `terraform plan` and `terraform apply`
+# - Only triggers when infrastructure-related files are modified
+#
+# ============================================================
+
 name: "Infrastructure Pipeline"
 
 on:

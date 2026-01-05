@@ -1,23 +1,23 @@
-name: "02 - To View TF-Plan"
+name: "02 - To show Infra Plan"
 
 on:
-    workflow_dispatch: # Only manual trigger
+    workflow_dispatch:
 
 permissions:
     contents: read
     id-token: write
-    pull-requests: write # Required for PR comments
+    pull-requests: write
 
 env:
     PROJECT_ID: "platformproject-481722"
 
 jobs:
     plan:
-        name: "Terraform Plan"
+        name: "Terraform Plan & Show"
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                layer: [vpc, gke] # Loops through both layers
+                layer: [vpc, gke]
 
         steps:
             - name: "Checkout"
@@ -35,42 +35,15 @@ jobs:
             - name: "Terraform Init"
               working-directory: infrastructure/environments/prod/${{ matrix.layer }}
               run: |
-                  terraform init \
-                    -backend-config="bucket=${{ env.PROJECT_ID }}-tf-state"
+                  terraform init -backend-config="bucket=${{ env.PROJECT_ID }}-tf-state"
 
+            # STEP 1: Run the plan and save it to a binary file
             - name: "Terraform Plan"
-              id: tf-plan
               working-directory: infrastructure/environments/prod/${{ matrix.layer }}
-              run: terraform plan -no-color -var-file="prod.tfvars"
+              run: terraform plan -var-file="prod.tfvars" -out=tfplan
 
-            # This posts the plan to your PR if one is open for the current branch
-            - name: "Post Plan Comment"
-              uses: actions/github-script@v7
-              if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
-              env:
-                  PLAN: "${{ steps.tf-plan.outputs.stdout }}"
-              with:
-                  github-token: ${{ secrets.GITHUB_TOKEN }}
-                  script: |
-                      const output = `#### 📖 Layer: ${{ matrix.layer }} 
-                      #### ⚙️ Terraform Plan: \`Success\`
-
-                      <details><summary>Click to expand Plan Details</summary>
-
-                      \`\`\`hcl
-                      ${process.env.PLAN}
-                      \`\`\`
-
-                      </details>
-
-                      *Triggered manually by: @${{ github.actor }}*`;
-
-                      // Note: This requires an active PR to function correctly
-                      if (context.issue.number) {
-                        github.rest.issues.createComment({
-                          issue_number: context.issue.number,
-                          owner: context.repo.owner,
-                          repo: context.repo.repo,
-                          body: output
-                        })
-                      }
+            # STEP 2: The "Beautiful" Colorized Show
+            # We remove '-no-color' to get the actual green/red output
+            - name: "Terraform Show (Colorized)"
+              working-directory: infrastructure/environments/prod/${{ matrix.layer }}
+              run: terraform show tfplan

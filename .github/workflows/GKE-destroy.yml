@@ -1,7 +1,7 @@
 name: "98 - DESTROY GKE Cluster"
 
 on:
-    workflow_dispatch: # Manual trigger only
+    workflow_dispatch:
 
 permissions:
     contents: read
@@ -25,13 +25,13 @@ jobs:
 
             - name: "Terraform Init"
               run: |
-                  cd infrastructure/environments/prod
+                  # CHANGE: Move into the GKE sub-directory
+                  cd infrastructure/environments/prod/gke
                   terraform init -backend-config="bucket=${{ vars.GCP_PROJECT_ID }}-tf-state"
 
-            # We use -target to ONLY destroy the GKE module resources
             - name: "Terraform Destroy GKE"
               run: |
-                  cd infrastructure/environments/prod
-                  terraform destroy -auto-approve \
-                    -target=module.gke \
-                    -var-file="prod.tfvars"
+                  cd infrastructure/environments/prod/gke
+                  # REMOVED: -target (not needed with split state)
+                  # ADDED: ../ to find the common prod.tfvars
+                  terraform destroy -auto-approve -var-file="../prod.tfvars"

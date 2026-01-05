@@ -17,7 +17,7 @@ jobs:
             - name: "Authenticate to GCP"
               uses: "google-github-actions/auth@v2"
               with:
-                  workload_identity_provider: "${{ vars.WIF_PROVIDER_NAME }}"
+                  workload_identity_provider: "${{ vars.WIF_PROVIDER_ID }}"
                   service_account: "${{ vars.GCP_SA_EMAIL }}"
 
             - name: "Setup Terraform"

@@ -1,4 +1,4 @@
-name: "97 - Utility: Terraform Force Unlock"
+name: "97 - Terraform Force Unlock"
 
 on:
     workflow_dispatch:

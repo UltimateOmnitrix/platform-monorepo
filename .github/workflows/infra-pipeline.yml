@@ -19,7 +19,7 @@
 #
 # ============================================================
 
-name: "Infrastructure Pipeline"
+name: "TF - Infrastructure Pipeline"
 
 on:
     push:

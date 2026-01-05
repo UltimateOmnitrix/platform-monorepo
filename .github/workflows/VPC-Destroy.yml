@@ -1,4 +1,4 @@
-name: "99 - DESTROY VPC Foundation"
+name: "99 - VPC Destroy"
 
 on:
     workflow_dispatch:

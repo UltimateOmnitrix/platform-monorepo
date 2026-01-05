@@ -40,14 +40,10 @@ jobs:
             # STEP 1: Run the plan and save it to a binary file
             - name: "Terraform Plan"
               working-directory: infrastructure/environments/prod/${{ matrix.layer }}
-              run: terraform plan -var-file="prod.tfvars" -out=tfplan
-              env:
-                  TF_CLI_ARGS: "-no-color=false" # Forces color codes
+              run: terraform plan -var-file="prod.tfvars" -out=tfplan -no-color=false
 
             # STEP 2: The "Beautiful" Colorized Show
             # We remove '-no-color' to get the actual green/red output
             - name: "Terraform Show (Colorized)"
               working-directory: infrastructure/environments/prod/${{ matrix.layer }}
-              run: terraform show tfplan
-              env:
-                  TF_CLI_ARGS: "-no-color=false" # Forces color codes even in show
+              run: terraform show tfplan -no-color=false

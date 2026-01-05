@@ -26,8 +26,6 @@ name: "Identity Verification"
 
 # Trigger on every push to main or manually to verify the link
 on:
-    push:
-        branches: [main]
     workflow_dispatch:
 
 jobs:

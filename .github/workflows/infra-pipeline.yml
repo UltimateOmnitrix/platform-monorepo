@@ -24,14 +24,8 @@ name: "Infrastructure Pipeline"
 on:
     push:
         branches: ["main"]
-        paths:
-            - "infrastructure/**"
-            - "modules/**"
     pull_request:
         branches: ["main"]
-        paths:
-            - "infrastructure/**"
-            - "modules/**"
     workflow_dispatch:
 
 permissions:
@@ -39,49 +33,47 @@ permissions:
     id-token: write
 
 env:
-    TF_VERSION: "1.14.3"
-    # Point to your production environment
-    WORKING_DIR: "infrastructure/environments/prod"
+    PROJECT_ID: "platformproject-481722"
 
 jobs:
-    terraform:
-        name: "Terraform"
+    deploy:
         runs-on: ubuntu-latest
-        defaults:
-            run:
-                working-directory: ${{ env.WORKING_DIR }}
-
         steps:
             - name: "Checkout"
               uses: actions/checkout@v4
 
-            # 1. Authenticate to Google Cloud using WIF (Day 1 Success)
             - name: "Authenticate to Google Cloud"
               uses: google-github-actions/auth@v2
               with:
                   workload_identity_provider: "${{ vars.WIF_PROVIDER_ID }}"
-                  service_account: "platform-sa@${{ vars.GCP_PROJECT_ID }}.iam.gserviceaccount.com"
+                  service_account: "platform-sa@${{ env.PROJECT_ID }}.iam.gserviceaccount.com"
 
-            # 2. Setup Terraform
             - name: "Setup Terraform"
               uses: hashicorp/setup-terraform@v3
-              with:
-                  terraform_version: ${{ env.TF_VERSION }}
 
-            # 3. Initialize (Connect to GCS State Bucket)
-            - name: "Terraform Init"
+            # --- STEP 1: VPC Foundation ---
+            - name: "VPC: Init & Plan"
               run: |
-                  terraform init \
-                    -backend-config="bucket=${{ vars.GCP_PROJECT_ID }}-tf-state"
-
-            # 4. Plan (The "View" - Shows you what will change)
-            - name: "Terraform Plan"
-              id: plan
-              run: |
+                  cd infrastructure/environments/prod/vpc
+                  terraform init -backend-config="bucket=${{ env.PROJECT_ID }}-tf-state"
                   terraform plan -var-file="prod.tfvars"
 
-            # 5. Apply (The "Action" - Only on Main Branch)
-            - name: "Terraform Apply"
+            - name: "VPC: Apply"
               if: github.ref == 'refs/heads/main' && github.event_name == 'push'
               run: |
+                  cd infrastructure/environments/prod/vpc
+                  terraform apply -auto-approve -var-file="prod.tfvars"
+
+            # --- STEP 2: GKE Cluster ---
+            # (This only runs after VPC is finished)
+            - name: "GKE: Init & Plan"
+              run: |
+                  cd infrastructure/environments/prod/gke
+                  terraform init -backend-config="bucket=${{ env.PROJECT_ID }}-tf-state"
+                  terraform plan -var-file="prod.tfvars"
+
+            - name: "GKE: Apply"
+              if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+              run: |
+                  cd infrastructure/environments/prod/gke
                   terraform apply -auto-approve -var-file="prod.tfvars"

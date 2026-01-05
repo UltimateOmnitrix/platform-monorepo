@@ -12,7 +12,7 @@
 
 # this defines tf version and confgire the remote backend 
 terraform {
-  required_version = "~> 1.5" # or your version
+  required_version = "~> 1.14.3" # or your version
 
   # this allows CI/CD pipleines to dynamically specify the bucket at runtime
   # terraform apply -auto-approve -var-file="prod.tfvars" from the bootstrap-found
@@ -49,6 +49,3 @@ output "wif_provider_name" {
 # TILL LINE NUMBER 44 it is FOR THE DAY -01 
 # *********
 # -----------------------------------------------------------------------------
-
-
-

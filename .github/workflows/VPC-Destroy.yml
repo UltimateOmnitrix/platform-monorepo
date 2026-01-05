@@ -1,0 +1,37 @@
+name: "99 - DESTROY VPC Foundation"
+
+on:
+    workflow_dispatch: # Manual trigger only
+
+permissions:
+    contents: read
+    id-token: write
+
+jobs:
+    destroy-vpc:
+        runs-on: ubuntu-latest
+        steps:
+            - name: "Checkout"
+              uses: "actions/checkout@v4"
+
+            - name: "Authenticate to GCP"
+              uses: "google-github-actions/auth@v2"
+              with:
+                  workload_identity_provider: "${{ vars.WIF_PROVIDER_NAME }}"
+                  service_account: "${{ vars.GCP_SA_EMAIL }}"
+
+            - name: "Setup Terraform"
+              uses: "hashicorp/setup-terraform@v3"
+
+            - name: "Terraform Init"
+              run: |
+                  cd infrastructure/environments/prod
+                  terraform init -backend-config="bucket=${{ vars.GCP_PROJECT_ID }}-tf-state"
+
+            # Targets the VPC module. Note: This will fail if GKE still exists!
+            - name: "Terraform Destroy VPC"
+              run: |
+                  cd infrastructure/environments/prod
+                  terraform destroy -auto-approve \
+                    -target=module.vpc \
+                    -var-file="prod.tfvars"

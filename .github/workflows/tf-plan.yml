@@ -41,7 +41,7 @@ jobs:
             - name: "Terraform Plan"
               id: tf-plan
               working-directory: infrastructure/environments/prod/${{ matrix.layer }}
-              run: terraform plan -no-color -var-file="../prod.tfvars"
+              run: terraform plan -no-color -var-file="prod.tfvars"
 
             # This posts the plan to your PR if one is open for the current branch
             - name: "Post Plan Comment"

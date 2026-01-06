@@ -22,58 +22,58 @@
 name: "TF - Infrastructure Pipeline"
 
 on:
-    push:
-        branches: ["main"]
-    pull_request:
-        branches: ["main"]
-    workflow_dispatch:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
 
 permissions:
-    contents: read
-    id-token: write
+  contents: read
+  id-token: write
 
 env:
-    PROJECT_ID: "platformproject-481722"
+  PROJECT_ID: "platformproject-481722"
 
 jobs:
-    deploy:
-        runs-on: ubuntu-latest
-        steps:
-            - name: "Checkout"
-              uses: actions/checkout@v4
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
 
-            - name: "Authenticate to Google Cloud"
-              uses: google-github-actions/auth@v2
-              with:
-                  workload_identity_provider: "${{ vars.WIF_PROVIDER_ID }}"
-                  service_account: "platform-sa@${{ env.PROJECT_ID }}.iam.gserviceaccount.com"
+      - name: "Authenticate to Google Cloud"
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: "${{ vars.WIF_PROVIDER_ID }}"
+          service_account: "platform-sa@${{ env.PROJECT_ID }}.iam.gserviceaccount.com"
 
-            - name: "Setup Terraform"
-              uses: hashicorp/setup-terraform@v3
+      - name: "Setup Terraform"
+        uses: hashicorp/setup-terraform@v3
 
-            # --- STEP 1: VPC Foundation ---
-            - name: "VPC: Init & Plan"
-              run: |
-                  cd infrastructure/environments/prod/vpc
-                  terraform init -backend-config="bucket=${{ env.PROJECT_ID }}-tf-state"
-                  terraform plan -var-file="prod.tfvars"
+      # --- STEP 1: VPC Foundation ---
+      - name: "VPC: Init & Plan"
+        run: |
+          cd infrastructure/environments/prod/vpc
+          terraform init -backend-config="bucket=${{ env.PROJECT_ID }}-tf-state"
+          terraform plan -var-file="prod.tfvars"
 
-            - name: "VPC: Apply"
-              if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-              run: |
-                  cd infrastructure/environments/prod/vpc
-                  terraform apply -auto-approve -var-file="prod.tfvars"
+      - name: "VPC: Apply"
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          cd infrastructure/environments/prod/vpc
+          terraform apply -auto-approve -var-file="prod.tfvars"
 
-            # --- STEP 2: GKE Cluster ---
-            # (This only runs after VPC is finished)
-            - name: "GKE: Init & Plan"
-              run: |
-                  cd infrastructure/environments/prod/gke
-                  terraform init -backend-config="bucket=${{ env.PROJECT_ID }}-tf-state"
-                  terraform plan -var-file="prod.tfvars"
+      # --- STEP 2: GKE Cluster ---
+      # (This only runs after VPC is finished)
+      - name: "GKE: Init & Plan"
+        run: |
+          cd infrastructure/environments/prod/gke
+          terraform init -backend-config="bucket=${{ env.PROJECT_ID }}-tf-state"
+          terraform plan -var-file="prod.tfvars"
 
-            - name: "GKE: Apply"
-              if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-              run: |
-                  cd infrastructure/environments/prod/gke
-                  terraform apply -auto-approve -var-file="prod.tfvars"
+      # - name: "GKE: Apply"
+      #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      #   run: |
+      #       cd infrastructure/environments/prod/gke
+      #       terraform apply -auto-approve -var-file="prod.tfvars"

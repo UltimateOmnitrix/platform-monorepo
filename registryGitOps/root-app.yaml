@@ -1,0 +1,34 @@
+#the api version tells which API group and version to use
+apiVersion: argoproj.io/v1alpha1
+
+#kind describes the type of resource, as Argo CD is custom resource
+# I used it as Application
+kind: Application
+
+metadata:
+  #this is for naming your application and assiging of namespace for you app
+  name: root-app
+  namespace: argocd
+
+#usually spec has answers of:
+# What - what do you want to deploy
+# Where - where do you want to deploy & where should it run
+# How - how do you want to deploy
+spec:
+  #with this project: default, this allows any git repo, any cluster , any namespace to be used
+  #basically having run an application with unrestricted access
+  project: default
+
+  # source tells ArgoCD wehre to read the app from
+  # it is location
+  source:
+    repoURL: "https://github.com/UltimateOmnitrix/platform-monorepo"
+    targetRevision: main
+    path: registryGitOps/applications
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

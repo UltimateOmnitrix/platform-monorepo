@@ -6,9 +6,10 @@ terraform {
 }
 
 module "vpc" {
-  source  = "github.com/UltimateOmnitrix/terraform-modules//modules/vpc?ref=main"
-  project = var.project_id
-  region  = "us-central1"
+  source     = "github.com/UltimateOmnitrix/terraform-modules//modules/vpc?ref=main"
+  project_id = "platformproject-481722"
+  #project_id = var.project_id
+  region = "us-central1"
 }
 
 # CRITICAL: We must output these so GKE can see them

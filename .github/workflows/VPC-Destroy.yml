@@ -19,6 +19,7 @@ jobs:
               with:
                   workload_identity_provider: "${{ vars.WIF_PROVIDER_ID }}"
                   service_account: "${{ vars.GCP_SA_EMAIL }}"
+                  project_id: "${{ vars.GCP_PROJECT_ID }}"
 
             - name: "Setup Terraform"
               uses: "hashicorp/setup-terraform@v3"

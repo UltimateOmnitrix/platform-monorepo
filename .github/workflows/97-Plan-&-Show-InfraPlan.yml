@@ -1,0 +1,49 @@
+name: "97-Plan-&-Show-InfraPlan"
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
+
+env:
+  PROJECT_ID: "platformproject-481722"
+
+jobs:
+  plan:
+    name: "Terraform Plan & Show"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        layer: [iam, vpc, gke]
+
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
+
+      - name: "Authenticate to Google Cloud"
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: "${{ vars.WIF_PROVIDER_ID }}"
+          service_account: "platform-sa@${{ env.PROJECT_ID }}.iam.gserviceaccount.com"
+
+      - name: "Setup Terraform"
+        uses: hashicorp/setup-terraform@v3
+
+      - name: "Terraform Init"
+        working-directory: infrastructure/environments/prod/${{ matrix.layer }}
+        run: |
+          terraform init -backend-config="bucket=${{ env.PROJECT_ID }}-tf-state"
+
+      # STEP 1: Run the plan and save it to a binary file
+      - name: "Terraform Plan"
+        working-directory: infrastructure/environments/prod/${{ matrix.layer }}
+        run: terraform plan -var-file="prod.tfvars" -out=tfplan
+
+      # STEP 2: The "Beautiful" Colorized Show
+      # We remove '-no-color' to get the actual green/red output
+      - name: "Terraform Show (Colorized)"
+        working-directory: infrastructure/environments/prod/${{ matrix.layer }}
+        run: terraform show tfplan

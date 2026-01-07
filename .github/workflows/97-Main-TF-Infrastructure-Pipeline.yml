@@ -19,7 +19,7 @@
 #
 # ============================================================
 
-name: "TF - Infrastructure Pipeline"
+name: "Main-TF-Infrastructure-Pipeline"
 
 on:
   push:
@@ -51,7 +51,20 @@ jobs:
       - name: "Setup Terraform"
         uses: hashicorp/setup-terraform@v3
 
-      # --- STEP 1: VPC Foundation ---
+      # --- STEP 1: IAM Foundation ---
+      - name: "IAM: Init & Plan"
+        run: |
+          cd infrastructure/environments/prod/iam
+          terraform init -backend-config="bucket=${{ env.PROJECT_ID }}-tf-state"
+          terraform plan -var-file="prod.tfvars"
+
+      - name: "IAM: Apply"
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          cd infrastructure/environments/prod/iam
+          terraform apply -auto-approve -var-file="prod.tfvars"
+
+      # --- STEP 2: VPC Foundation ---
       - name: "VPC: Init & Plan"
         run: |
           cd infrastructure/environments/prod/vpc
@@ -64,7 +77,7 @@ jobs:
           cd infrastructure/environments/prod/vpc
           terraform apply -auto-approve -var-file="prod.tfvars"
 
-      # --- STEP 2: GKE Cluster ---
+      # --- STEP 3: GKE Cluster ---
       # (This only runs after VPC is finished)
       - name: "GKE: Init & Plan"
         run: |

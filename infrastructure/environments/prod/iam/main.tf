@@ -16,7 +16,9 @@ terraform {
 
   # this allows CI/CD pipleines to dynamically specify the bucket at runtime
   # terraform apply -auto-approve -var-file="prod.tfvars" from the bootstrap-found
-  backend "gcs" {}
+  backend "gcs" {
+    prefix = "env/prod/iam"
+  }
 }
 
 provider "google" {

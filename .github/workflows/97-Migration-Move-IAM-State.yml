@@ -1,0 +1,45 @@
+name: "97-Migration-Move-IAM-State"
+
+on:
+  workflow_dispatch: # Manual trigger only (Run once)
+
+env:
+  PROJECT_ID: "platformproject-481722"
+  BUCKET_NAME: "platformproject-481722-tf-state"
+  # OLD Path: Where the state used to live (Root of prod)
+  OLD_PATH: "env/prod/default.tfstate"
+  # NEW Path: Where the state needs to be (Inside IAM folder)
+  NEW_PATH: "env/prod/iam/default.tfstate"
+
+jobs:
+  move-state-file:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: "Authenticate to Google Cloud"
+        uses: "google-github-actions/auth@v2"
+        with:
+          workload_identity_provider: "${{ vars.WIF_PROVIDER_ID }}"
+          service_account: "${{ vars.GCP_SA_EMAIL }}"
+          project_id: "${{ env.PROJECT_ID }}"
+
+      - name: "Move State File in Bucket"
+        run: |
+          echo "🔎 Checking for old state file..."
+
+          # Check if the OLD file exists
+          if gcloud storage ls gs://${{ env.BUCKET_NAME }}/${{ env.OLD_PATH }}; then
+            echo "✅ Found old state. Moving it to the new home..."
+            
+            # The Magic Command: Move the file
+            gcloud storage mv \
+              gs://${{ env.BUCKET_NAME }}/${{ env.OLD_PATH }} \
+              gs://${{ env.BUCKET_NAME }}/${{ env.NEW_PATH }}
+            
+            echo "🚀 Success! State migrated to ${{ env.NEW_PATH }}"
+          else
+            echo "⚠️ Old state file not found. It might have already been moved or destroyed."
+          fi

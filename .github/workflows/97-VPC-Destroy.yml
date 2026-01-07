@@ -1,0 +1,39 @@
+name: "97-VPC-Destroy"
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  destroy-vpc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v4"
+
+      - name: "Authenticate to GCP"
+        uses: "google-github-actions/auth@v2"
+        with:
+          workload_identity_provider: "${{ vars.WIF_PROVIDER_ID }}"
+          # service_account: "${{ vars.GCP_SA_EMAIL }}"
+          service_account: "platform-sa@platformproject-481722.iam.gserviceaccount.com"
+          project_id: "${{ vars.GCP_PROJECT_ID }}"
+
+      - name: "Setup Terraform"
+        uses: "hashicorp/setup-terraform@v3"
+
+      - name: "Terraform Init"
+        run: |
+          # CHANGE: Move into the VPC sub-directory
+          cd infrastructure/environments/prod/vpc
+          terraform init -backend-config="bucket=${{ vars.GCP_PROJECT_ID }}-tf-state"
+
+      - name: "Terraform Destroy VPC"
+        run: |
+          cd infrastructure/environments/prod/vpc
+          # REMOVED: -target
+          # ADDED: ../ to find the common prod.tfvars
+          terraform destroy -auto-approve -var-file="../prod.tfvars"

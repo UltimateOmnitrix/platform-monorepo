@@ -9,7 +9,7 @@ env:
   # OLD Path: Where the state used to live (Root of prod)
   OLD_PATH: "default.tfstate"
   # NEW Path: Where the state needs to be (Inside IAM folder)
-  NEW_PATH: "env/prod/iam/default.tfstate"
+  NEW_PATH: "terraform/state/iam/default.tfstate"
 
 jobs:
   move-state-file:

@@ -7,7 +7,7 @@ env:
   PROJECT_ID: "platformproject-481722"
   BUCKET_NAME: "platformproject-481722-tf-state"
   # OLD Path: Where the state used to live (Root of prod)
-  OLD_PATH: "env/prod/default.tfstate"
+  OLD_PATH: "default.tfstate"
   # NEW Path: Where the state needs to be (Inside IAM folder)
   NEW_PATH: "env/prod/iam/default.tfstate"
 

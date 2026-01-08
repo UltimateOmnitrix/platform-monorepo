@@ -1,4 +1,5 @@
 # ------------------------------ ------------------------------ ------------------------------
+# THIS FILE GETS EXECUTED AFTER THE GKE Main.tf completes
 # this file is for to install & continuously manage the argocd in the K8 cluster using argocd..
 # THIS IS CHILD argo cd application whose only job is install argocd, keep it in sync with git repo
 # recreate it if someone breaks it

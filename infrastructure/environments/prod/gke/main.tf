@@ -17,7 +17,7 @@ data "terraform_remote_state" "vpc" {
 module "gke" {
   source              = "github.com/UltimateOmnitrix/terraform-modules//modules/gke?ref=main"
   project_id          = var.project_id
-  region              = "us-central1"
+  region              = var.region
   network_name        = data.terraform_remote_state.vpc.outputs.network_name
   subnet_name         = data.terraform_remote_state.vpc.outputs.subnet_name
   pods_range_name     = data.terraform_remote_state.vpc.outputs.pods_range

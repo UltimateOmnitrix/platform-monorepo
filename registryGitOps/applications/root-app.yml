@@ -1,0 +1,51 @@
+# root-app.yml is the entry point into GitOps, the root-app.yml file is the parent file of all the application
+
+# My understiand about this file is root-app.yml file tells ArgoCd where in Git to find other Argo CD application &
+# manage them automaticlly...
+# This helps crate app with automation things will be taken care by the argocd
+
+# I would apply kubectl apply -f root-app.yml to create the argocd application resource , first k8 accepts the file and creats an Argo CD application,
+# with name root-app in argocd namespace.
+# Then argo CD reads the spec, connects to the Git repo, checks out given branch and scans the config path for other argo CD applica yml files..
+
+## an argo cd application object is k8 resource that tells Argo CD what to deploy, from where , to where and how to keep it sync
+
+#the api version tells which API group and version to use
+apiVersion: argoproj.io/v1alpha1
+
+#kind describes the type of resource, as Argo CD is custom resource
+# I used it as Application
+kind: Application
+
+metadata:
+  #this is for naming your application and assiging of namespace for you app
+  #this metadata.namespace defines where the ArgoCD application CR(custom resource) will be create or lives
+  name: root-app
+  namespace: argocd
+
+#usually spec has answers of:
+# What - what do you want to deploy
+# Where - where do you want to deploy & where should it run
+# How - how do you want to deploy
+spec:
+  #with this project: default, this allows any git repo, any cluster , any namespace to be used
+  #basically having run an application with unrestricted access
+  project: default
+
+  # source tells ArgoCD wehre to read the app from
+  # it is location
+  source:
+    repoURL: https://github.com/UltimateOmnitrix/platform-monorepo.git ## adding the .git is optinoal industrystand if not you should add this way "https://github.com/UltimateOmnitrix/platform-monorepo.git"
+    targetRevision: main
+    path: registryGitOps/applications
+
+  # destination tells two things which k8 cluster to deploy and in which namespace
+  destination:
+    server: "https://kubernetes.default.svc" # this the cluster regular dns name, you can your own name as well (https://prod-cluster-api.company.com)
+    namespace: argocd #this destination.namespace defines where the application resource are deployed
+
+  # this are the polices in here tells the ArgoCD how strictlry it should keep the cluster matching with the GIT repo....
+  syncPolicy:
+    automated: #this tells don't wait for the a human click to sync, you can do by yourself
+      prune: true #this is if something is reomoved from git, remove it from cluster too..
+      selfHeal: true #if any manual changes are made, rever back to what git says.

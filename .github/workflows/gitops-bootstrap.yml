@@ -1,0 +1,51 @@
+name: "98 - GitOps - Bootstrap ArgoCD"
+
+on:
+    workflow_dispatch: # Allows you to click "Run" manually
+    workflow_run: # Runs automatically when Infra finishes successfully
+        workflows: ["Main-TF-Infrastructure-Pipeline"]
+        types:
+            - completed
+
+env:
+    PROJECT_ID: "platformproject-481722"
+    CLUSTER_NAME: "omnitrix-cluster" # Must match your Terraform var
+    REGION: "us-central1-a"
+
+jobs:
+    bootstrap:
+        # Only run if the Infra pipeline was SUCCESSFUL
+        if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+        runs-on: ubuntu-latest
+        permissions:
+            contents: "read"
+            id-token: "write" # Required for Workload Identity
+
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v4
+
+            # 1. Login to Google Cloud
+            - name: Authenticate to Google Cloud
+              uses: google-github-actions/auth@v2
+              with:
+                  workload_identity_provider: "${{ vars.WIF_PROVIDER_ID }}"
+                  service_account: "platform-sa@${{ env.PROJECT_ID }}.iam.gserviceaccount.com"
+
+            # 2. Connect to the GKE Cluster
+            - name: Get GKE Credentials
+              uses: google-github-actions/get-gke-credentials@v2
+              with:
+                  cluster_name: ${{ env.CLUSTER_NAME }}
+                  location: ${{ env.REGION }}
+
+            # 3. The "Key Turn" (Apply the App of Apps)
+            - name: Apply ArgoCD Root App
+              run: |
+                  echo "🚀 Applying GitOps Root Application..."
+
+                  # This command wakes up ArgoCD and points it to your registry folder
+                  kubectl apply -f registryGitOps/applications/root-app.yml
+
+
+                  echo "✅ Success! ArgoCD is now syncing your apps."

@@ -1,38 +1,38 @@
-name: "98 - GKE Destroy"
+name: "97-GKE-Destroy"
 
 on:
-    workflow_dispatch:
+  workflow_dispatch:
 
 permissions:
-    contents: read
-    id-token: write
+  contents: read
+  id-token: write
 
 jobs:
-    destroy-gke:
-        runs-on: ubuntu-latest
-        steps:
-            - name: "Checkout"
-              uses: "actions/checkout@v4"
+  destroy-gke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v4"
 
-            - name: "Authenticate to GCP"
-              uses: "google-github-actions/auth@v2"
-              with:
-                  workload_identity_provider: "${{ vars.WIF_PROVIDER_ID }}"
-                  service_account: "platform-sa@platformproject-481722.iam.gserviceaccount.com"
-                  project_id: "${{ vars.GCP_PROJECT_ID }}"
+      - name: "Authenticate to GCP"
+        uses: "google-github-actions/auth@v2"
+        with:
+          workload_identity_provider: "${{ vars.WIF_PROVIDER_ID }}"
+          service_account: "platform-sa@platformproject-481722.iam.gserviceaccount.com"
+          project_id: "${{ vars.GCP_PROJECT_ID }}"
 
-            - name: "Setup Terraform"
-              uses: "hashicorp/setup-terraform@v3"
+      - name: "Setup Terraform"
+        uses: "hashicorp/setup-terraform@v3"
 
-            - name: "Terraform Init"
-              run: |
-                  # CHANGE: Move into the GKE sub-directory
-                  cd infrastructure/environments/prod/gke
-                  terraform init -backend-config="bucket=${{ vars.GCP_PROJECT_ID }}-tf-state"
+      - name: "Terraform Init"
+        run: |
+          # CHANGE: Move into the GKE sub-directory
+          cd infrastructure/environments/prod/gke
+          terraform init -backend-config="bucket=${{ vars.GCP_PROJECT_ID }}-tf-state"
 
-            - name: "Terraform Destroy GKE"
-              run: |
-                  cd infrastructure/environments/prod/gke
-                  # REMOVED: -target (not needed with split state)
-                  # ADDED: ../ to find the common prod.tfvars
-                  terraform destroy -auto-approve -var-file="../prod.tfvars"
+      - name: "Terraform Destroy GKE"
+        run: |
+          cd infrastructure/environments/prod/gke
+          # REMOVED: -target (not needed with split state)
+          # ADDED: ../ to find the common prod.tfvars
+          terraform destroy -auto-approve -var-file="../prod.tfvars"

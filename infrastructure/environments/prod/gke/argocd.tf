@@ -44,14 +44,25 @@ resource "helm_release" "argocd" {
 
   # Configuration & this is helm value overriding 
   # we are exposing the argocd with cluster ip cause we are using port forwarding to access it
-  set {
-    name  = "server.service.type"
-    value = "ClusterIP" # We will use Port Forwarding to access it
-  }
+  # set {
+  #   name  = "server.service.type"
+  #   value = "ClusterIP" # We will use Port Forwarding to access it
+  # }
 
-  # Disable HA for now to save resources (optional)
-  set {
-    name  = "server.replicas"
-    value = "1"
-  }
+  # # Disable HA for now to save resources (optional)
+  # set {
+  #   name  = "server.replicas"
+  #   value = "1"
+  # }
+
+  values = [
+    yamlencode({
+      server = {
+        service = {
+          type = "ClusterIP"
+        }
+        replicas = 1 # Run only 1 pod to save money
+      }
+    })
+  ]
 }

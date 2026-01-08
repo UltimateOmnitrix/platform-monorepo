@@ -11,7 +11,7 @@
 # why to use this "kubernetes_namespace" why now GKE or somehitng google resource casue, 
 # namespce are managed inside by the k8, gcp or gke manages only the cluster
 # 1. Create the Namespace
-resource "kubernetes_namespace" "argocd" {
+resource "kubernetes_namespace_v1" "argocd" {
   metadata {
     name = "argocd"
   }
@@ -33,7 +33,7 @@ resource "helm_release" "argocd" {
 
   # this tells k8 namespace to install where terraform created namespace
   # as metadata is actually a list of objects, we are using index 0 to get the name
-  namespace = kubernetes_namespace.argocd.metadata[0].name
+  namespace = kubernetes_namespace_v1.argocd.metadata[0].name
 
   # CRITICAL: Must wait for nodes to be online
   depends_on = [

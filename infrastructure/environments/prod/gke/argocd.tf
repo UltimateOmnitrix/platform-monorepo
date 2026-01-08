@@ -55,6 +55,7 @@ resource "helm_release" "argocd" {
   #   value = "1"
   # }
 
+  ## the above throwed up a error using the set, so changed to bewlo ok 
   values = [
     yamlencode({
       server = {

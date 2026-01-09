@@ -56,3 +56,42 @@ provider "helm" {
     cluster_ca_certificate = base64decode(module.gke.cluster_ca_certificate)
   }
 }
+
+
+
+# ---------------------------------------------------------
+# ✅ CROSSPLANE IDENTITY (Managed in GKE Layer)
+# ---------------------------------------------------------
+
+# 1. Create the Google Service Account (GSA)
+resource "google_service_account" "crossplane" {
+  account_id   = "crossplane-provider"
+  display_name = "Crossplane Provider GSA"
+  project      = var.project_id
+}
+
+# 2. Grant "Owner" access (So Crossplane can build SQL/Redis)
+resource "google_project_iam_member" "crossplane_owner" {
+  project = var.project_id
+  role    = "roles/owner"
+  member  = "serviceAccount:${google_service_account.crossplane.email}"
+}
+
+# 3. Bind GSA to KSA (Workload Identity)
+# This creates the link: K8s Service Account -> Google Service Account
+resource "google_service_account_iam_member" "crossplane_bind" {
+  service_account_id = google_service_account.crossplane.name
+  role               = "roles/iam.workloadIdentityUser"
+
+  # The Identity Pool is created by the GKE module, so this reference is valid here!
+  member = "serviceAccount:${var.project_id}.svc.id.goog[crossplane-system/provider-gcp]"
+
+  # ✅ This works here because 'module.gke' is defined in THIS file
+  depends_on = [module.gke]
+}
+
+# 4. (Optional) Print the email so we can see it
+output "crossplane_email" {
+  description = "The Google Service Account email for Crossplane"
+  value       = google_service_account.crossplane.email
+}

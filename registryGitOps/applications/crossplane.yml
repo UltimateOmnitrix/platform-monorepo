@@ -17,8 +17,9 @@ spec:
     helm:
       releaseName: crossplane
       parameters:
-        - name: "args[0]"
-          value: "--enable-external-secret-stores" # we are enabling this to use the external secret stores
+        # THE below argo of external-secrets deprecated ok
+        # - name: "args[0]"
+        #   value: "--enable-external-secret-stores" # we are enabling this to use the external secret stores
         - name: "args[1]"
           value:
             "--enable-usages" # The resources would have dependencies and we can track them using this flag, and

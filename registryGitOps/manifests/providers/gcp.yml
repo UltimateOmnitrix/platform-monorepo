@@ -1,7 +1,6 @@
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:
-  name: provider-gcp
+  name: provider-gcp-storage
 spec:
-  # The Monolith (Stable v1.8.0)
-  package: xpkg.upbound.io/upbound/provider-gcp:v1.8.0
+  package: xpkg.upbound.io/upbound/provider-gcp-storage:v1.8.0

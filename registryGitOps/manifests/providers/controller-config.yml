@@ -1,21 +1,21 @@
-# For Crossplane v2.x, use DeploymentRuntimeConfig instead of ControllerConfig
-apiVersion: pkg.crossplane.io/v1beta1
-kind: DeploymentRuntimeConfig
-metadata:
-  name: gcp-config
-spec:
-  deploymentTemplate:
-    spec:
-      selector: {}
-      template:
-        spec:
-          serviceAccountName: crossplane-provider
----
-# Create the Kubernetes Service Account with Workload Identity annotation
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: crossplane-provider
-  namespace: crossplane-system
-  annotations:
-    iam.gke.io/gcp-service-account: crossplane-provider@platformproject-481722.iam.gserviceaccount.com
+# # For Crossplane v2.x, use DeploymentRuntimeConfig instead of ControllerConfig
+# apiVersion: pkg.crossplane.io/v1beta1
+# kind: DeploymentRuntimeConfig
+# metadata:
+#   name: gcp-config
+# spec:
+#   deploymentTemplate:
+#     spec:
+#       selector: {}
+#       template:
+#         spec:
+#           serviceAccountName: crossplane-provider
+# ---
+# # Create the Kubernetes Service Account with Workload Identity annotation
+# apiVersion: v1
+# kind: ServiceAccount
+# metadata:
+#   name: crossplane-provider
+#   namespace: crossplane-system
+#   annotations:
+#     iam.gke.io/gcp-service-account: crossplane-provider@platformproject-481722.iam.gserviceaccount.com

@@ -1,0 +1,8 @@
+apiVersion: gcp.upbound.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: default
+spec:
+  projectID: platformproject-481722 # ✅ Your specific Project ID
+  credentials:
+    source: InjectedIdentity # ✅ Tells Crossplane to use Workload Identity

@@ -4,7 +4,8 @@ metadata:
   name: omnitrix-verification-bucket
   namespace: default
   annotations:
-    crossplane.io/external-name: omnitrix-verification-${project_id} # Will replace with your actual ID
+    ####crossplane.io/external-name: omnitrix-verification-${project_id} # Will replace with your actual ID
+    crossplane.io/external-name: omnitrix-verification-platformproject-481722
 spec:
   forProvider:
     location: US

@@ -4,4 +4,7 @@ metadata:
   name: provider-gcp
 spec:
   # ✅ Using the v2-compatible release
-  package: xpkg.upbound.io/crossplane-contrib/provider-upjet-gcp:v1.14.0
+
+  #3package: xpkg.upbound.io/crossplane-contrib/provider-upjet-gcp:v1.14.0
+
+  package: xpkg.upbound.io/upbound/provider-gcp-cloud:v2.4.0

@@ -1,29 +1,10 @@
-# ✅ Storage Provider (For Task 4.4)
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:
-  name: provider-gcp-storage
+  name: provider-gcp
 spec:
-  package: xpkg.upbound.io/upbound/provider-gcp-storage:v2.2.0
-  controllerConfigRef:
-    name: gcp-config
----
-# ✅ SQL Provider (For Day 5)
-apiVersion: pkg.crossplane.io/v1
-kind: Provider
-metadata:
-  name: provider-gcp-sql
-spec:
-  package: xpkg.upbound.io/upbound/provider-gcp-sql:v2.2.0
-  controllerConfigRef:
-    name: gcp-config
----
-# ✅ Network Provider (Required for SQL connectivity)
-apiVersion: pkg.crossplane.io/v1
-kind: Provider
-metadata:
-  name: provider-gcp-compute
-spec:
-  package: xpkg.upbound.io/upbound/provider-gcp-compute:v2.2.0
+  # ✅ The Monolith (All-in-One)
+  package: xpkg.upbound.io/upbound/provider-gcp:v1.8.0
+  # ✅ Links to the file we created in Step 2
   controllerConfigRef:
     name: gcp-config

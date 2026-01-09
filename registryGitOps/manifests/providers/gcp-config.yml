@@ -3,6 +3,6 @@ kind: ProviderConfig
 metadata:
   name: default
 spec:
-  projectID: platformproject-481722 # ✅ Your specific Project ID
+  projectID: platformproject-481722
   credentials:
-    source: InjectedIdentity # ✅ Tells Crossplane to use Workload Identity
+    source: InjectedIdentity

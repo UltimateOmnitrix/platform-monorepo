@@ -1,18 +1,10 @@
-# The ControllerConfig tells Crossplane providers to use Workload Identity
 apiVersion: pkg.crossplane.io/v1alpha1
 kind: ControllerConfig
 metadata:
   name: gcp-config
-  annotations:
-    iam.gke.io/gcp-service-account: crossplane-provider@platformproject-481722.iam.gserviceaccount.com
 spec:
-  serviceAccountName: crossplane-provider
----
-# Create the Kubernetes Service Account that providers will use
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: crossplane-provider
-  namespace: crossplane-system
-  annotations:
-    iam.gke.io/gcp-service-account: crossplane-provider@platformproject-481722.iam.gserviceaccount.com
+  # ✅ Force the Pod to use the Service Account named 'provider-gcp'
+  # (This matches the default name Terraform usually sets up)
+  serviceAccountName: provider-gcp
+  args:
+    - --debug

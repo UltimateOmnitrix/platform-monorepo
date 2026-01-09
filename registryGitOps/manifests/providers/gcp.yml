@@ -3,8 +3,5 @@ kind: Provider
 metadata:
   name: provider-gcp
 spec:
-  # ✅ The Monolith (All-in-One)
+  # The Monolith (Stable v1.8.0)
   package: xpkg.upbound.io/upbound/provider-gcp:v1.8.0
-  # ✅ Links to the file we created in Step 2
-  controllerConfigRef:
-    name: gcp-config

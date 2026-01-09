@@ -1,10 +1,34 @@
+# apiVersion: pkg.crossplane.io/v1
+# kind: Provider
+# metadata:
+#   name: provider-gcp
+# spec:
+#   # ✅ Using the v2-compatible release
+
+#   #3package: xpkg.upbound.io/crossplane-contrib/provider-upjet-gcp:v1.14.0
+
+#   package: xpkg.upbound.io/upbound/provider-gcp-cloud:v2.4.0
+
+# ✅ Storage Provider (For Task 4.4)
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:
-  name: provider-gcp
+  name: provider-gcp-storage
 spec:
-  # ✅ Using the v2-compatible release
-
-  #3package: xpkg.upbound.io/crossplane-contrib/provider-upjet-gcp:v1.14.0
-
-  package: xpkg.upbound.io/upbound/provider-gcp-cloud:v2.4.0
+  package: xpkg.upbound.io/upbound/provider-gcp-storage:v2.2.0
+---
+# ✅ SQL Provider (For Day 5)
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-gcp-sql
+spec:
+  package: xpkg.upbound.io/upbound/provider-gcp-sql:v2.2.0
+---
+# ✅ Network Provider (Required for SQL connectivity)
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-gcp-compute
+spec:
+  package: xpkg.upbound.io/upbound/provider-gcp-compute:v2.2.0

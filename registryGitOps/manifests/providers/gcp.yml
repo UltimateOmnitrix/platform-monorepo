@@ -10,12 +10,15 @@
 #   package: xpkg.upbound.io/upbound/provider-gcp-cloud:v2.4.0
 
 # ✅ Storage Provider (For Task 4.4)
-apiVersion: pkg.crossplane.io/v1
-kind: Provider
+
+apiVersion: pkg.crossplane.io/v1alpha1
+kind: ControllerConfig
 metadata:
-  name: provider-gcp-storage
+  name: gcp-config
+  annotations:
+    iam.gke.io/gcp-service-account: crossplane-provider@platformproject-481722.iam.gserviceaccount.com
 spec:
-  package: xpkg.upbound.io/upbound/provider-gcp-storage:v2.2.0
+  serviceAccountName: crossplane-provider
 ---
 # ✅ SQL Provider (For Day 5)
 apiVersion: pkg.crossplane.io/v1
@@ -32,3 +35,6 @@ metadata:
   name: provider-gcp-compute
 spec:
   package: xpkg.upbound.io/upbound/provider-gcp-compute:v2.2.0
+
+---
+

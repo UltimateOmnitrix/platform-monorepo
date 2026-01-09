@@ -1,13 +1,13 @@
-apiVersion: storage.gcp.upbound.io/v1beta1
-kind: Bucket
-metadata:
-  name: omnitrix-verification-bucket
-  namespace: default
-  annotations:
-    crossplane.io/external-name: omnitrix-verification-${project_id} # Will replace with your actual ID
-spec:
-  forProvider:
-    location: US
-    storageClass: STANDARD
-  providerConfigRef:
-    name: default
+# apiVersion: storage.gcp.upbound.io/v1beta1
+# kind: Bucket
+# metadata:
+#   name: omnitrix-verification-bucket
+#   namespace: default
+#   annotations:
+#     crossplane.io/external-name: omnitrix-verification-${project_id} # Will replace with your actual ID
+# spec:
+#   forProvider:
+#     location: US
+#     storageClass: STANDARD
+#   providerConfigRef:
+#     name: default

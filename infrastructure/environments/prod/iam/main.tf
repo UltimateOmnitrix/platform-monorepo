@@ -51,3 +51,43 @@ output "wif_provider_name" {
 # TILL LINE NUMBER 44 it is FOR THE DAY -01 
 # *********
 # -----------------------------------------------------------------------------
+
+
+
+# ---------------------------------------------------------
+# ✅ CROSSPLANE IDENTITY (Day 4)
+# ---------------------------------------------------------
+
+# the process goes by this way, in first resource, google_service_account your are creating a service account, 
+# in the second using hte IAM you are giving the permission as owner to that service account 
+# in the third we binding to KSA (Workload Identity) of the Kubernetes workload identity pool , by which mean KSA impersonates the GSA 
+
+# 1. Create the Google Service Account (GSA)
+resource "google_service_account" "crossplane" {
+  account_id   = "crossplane-provider"
+  display_name = "Crossplane Provider GSA"
+}
+
+# 2. Grant "Owner" access (For the Demo - easiest way)
+resource "google_project_iam_member" "crossplane_owner" {
+  project = var.project_id
+  role    = "roles/owner" # ⚠️ Powerful! For production, Scope this down.
+  member  = "serviceAccount:${google_service_account.crossplane.email}"
+}
+
+# 3. Bind GSA to KSA (Workload Identity)
+# "Allow the 'provider-gcp-*' pods in 'crossplane-system' to act as this GSA"
+
+# the below binding process is super simple first you will install the provider-gcp, so the crossplane deploys provider controller pods 
+# into crossplane-system namespace 
+# usually the pods which are deployed gets provider spsecifc KSA (provider-gcp), we binding those to the GSA tto secrurely access GCP API's
+resource "google_service_account_iam_member" "crossplane_bind" {
+  service_account_id = google_service_account.crossplane.name
+  role               = "roles/iam.workloadIdentityUser"
+  member             = "serviceAccount:${var.project_id}.svc.id.goog[crossplane-system/provider-gcp]"
+}
+
+# 4. Output the Email (We need this for the next step)
+output "crossplane_email" {
+  value = google_service_account.crossplane.email
+}

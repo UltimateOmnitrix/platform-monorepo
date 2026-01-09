@@ -1,3 +1,5 @@
+## DAY -03
+
 # ------------------------------ ------------------------------ ------------------------------
 #this file is for to install & continuously manage the ingress-nginx controller in the K8 cluster using argocd..
 # THIS IS CHILD argo cd application whose only job is install ingress-nginx controller, keep it in sync with git repo

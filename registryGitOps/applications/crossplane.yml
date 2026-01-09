@@ -1,0 +1,34 @@
+# DAY 4 tasks
+# Crossplane Installation with helm provider, but argocd installs this
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: crossplane
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    chart: crossplane
+    repoURL: https://charts.crossplane.io/stable
+    targetRevision: 2.1.3 # ✅ Validated: Latest Stable as of Dec 2025
+    helm:
+      releaseName: crossplane
+      parameters:
+        - name: "args[0]"
+          value: "--enable-external-secret-stores" # we are enabling this to use the external secret stores
+        - name: "args[1]"
+          value:
+            "--enable-usages" # The resources would have dependencies and we can track them using this flag, and
+            # if any resource is deleted, it will delete the dependencies as well, cleansup in correct order...
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: crossplane-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

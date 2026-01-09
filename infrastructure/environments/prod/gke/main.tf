@@ -25,6 +25,9 @@ module "gke" {
 }
 
 
+## BELOW IS DAY 03
+
+
 #As terraform needs to talk to GKE cluster, tf needs where the cluster is, 
 # who it is (identity)
 # proof the cluster with certificate 

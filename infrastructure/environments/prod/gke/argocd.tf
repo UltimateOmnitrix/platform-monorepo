@@ -1,3 +1,5 @@
+# Day 03 
+
 # ------------------------------ ------------------------------ ------------------------------
 # THIS FILE GETS EXECUTED AFTER THE GKE Main.tf completes
 # this file is for to install & continuously manage the argocd in the K8 cluster using argocd..

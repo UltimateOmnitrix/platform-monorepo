@@ -66,6 +66,7 @@ output "wif_provider_name" {
 resource "google_service_account" "crossplane" {
   account_id   = "crossplane-provider"
   display_name = "Crossplane Provider GSA"
+  project      = var.project_id
 }
 
 # 2. Grant "Owner" access (For the Demo - easiest way)
@@ -85,6 +86,9 @@ resource "google_service_account_iam_member" "crossplane_bind" {
   service_account_id = google_service_account.crossplane.name
   role               = "roles/iam.workloadIdentityUser"
   member             = "serviceAccount:${var.project_id}.svc.id.goog[crossplane-system/provider-gcp]"
+
+  # ✅ CRITICAL: Wait for the cluster to be finished!
+  depends_on = [module.gke]
 }
 
 # 4. Output the Email (We need this for the next step)

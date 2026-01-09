@@ -84,7 +84,14 @@ resource "google_service_account_iam_member" "crossplane_bind" {
   role               = "roles/iam.workloadIdentityUser"
 
   # The Identity Pool is created by the GKE module, so this reference is valid here!
-  member = "serviceAccount:${var.project_id}.svc.id.goog[crossplane-system/provider-gcp]"
+  #member = "serviceAccount:${var.project_id}.svc.id.goog[crossplane-system/provider-gcp]"
+
+  #kubectl get serviceaccounts -n crossplane-system | grep provider Ran this cmd and it gave this service account name  
+  #saisarany123@cloudshell:~ (platformproject-481722)$ kubectl get serviceaccounts -n crossplane-system | grep provider
+  #provider-gcp-storage-6c18018c2da3          0         11m
+  #upbound-provider-family-gcp-e00a6bd044c9   0         11m
+
+  member = "serviceAccount:${var.project_id}.svc.id.goog[crossplane-system/provider-gcp-storage-6c18018c2da3]"
 
   # ✅ This works here because 'module.gke' is defined in THIS file
   depends_on = [module.gke]

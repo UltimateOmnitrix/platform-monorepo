@@ -3,4 +3,4 @@ kind: Provider
 metadata:
   name: provider-gcp-storage
 spec:
-  package: xpkg.upbound.io/upbound/provider-gcp-storage:v1.8.0
+  package: xpkg.upbound.io/upbound/provider-gcp-storage:v2.2.0

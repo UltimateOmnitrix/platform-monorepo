@@ -1,10 +1,16 @@
-# apiVersion: pkg.crossplane.io/v1alpha1
-# kind: ControllerConfig
-# metadata:
-#   name: gcp-config
-# spec:
-#   # ✅ Force the Pod to use the Service Account named 'provider-gcp'
-#   # (This matches the default name Terraform usually sets up)
-#   serviceAccountName: provider-gcp
-#   args:
-#     - --debug
+apiVersion: pkg.crossplane.io/v1alpha1
+kind: ControllerConfig
+metadata:
+  name: gcp-config
+  annotations:
+    iam.gke.io/gcp-service-account: crossplane-provider@platformproject-481722.iam.gserviceaccount.com
+spec:
+  serviceAccountName: crossplane-provider
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: crossplane-provider
+  namespace: crossplane-system
+  annotations:
+    iam.gke.io/gcp-service-account: crossplane-provider@platformproject-481722.iam.gserviceaccount.com

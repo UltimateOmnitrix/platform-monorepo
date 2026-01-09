@@ -4,3 +4,5 @@ metadata:
   name: provider-gcp-storage
 spec:
   package: xpkg.upbound.io/upbound/provider-gcp-storage:v2.2.0
+  controllerConfigRef:
+    name: gcp-config # ← Add this line!

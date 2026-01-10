@@ -59,13 +59,32 @@ resource "helm_release" "argocd" {
   # }
 
   ## the above throwed up a error using the set, so changed to bewlo ok 
+  # values = [
+  #   yamlencode({
+  #     server = {
+  #       service = {
+  #         type = "ClusterIP"
+  #       }
+  #       replicas = 1 # Run only 1 pod to save money
+  #     }
+  #   })
+  # ]
+
+
+  # ✅ UPDATED CONFIGURATION
   values = [
     yamlencode({
       server = {
         service = {
-          type = "ClusterIP"
+          # Change type to NodePort
+          type = "NodePort"
+          # Define specific ports so they don't change randomly
+          nodePorts = {
+            http  = 30080
+            https = 30443
+          }
         }
-        replicas = 1 # Run only 1 pod to save money
+        replicas = 1
       }
     })
   ]

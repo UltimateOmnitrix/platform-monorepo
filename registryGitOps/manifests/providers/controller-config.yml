@@ -3,9 +3,6 @@ kind: DeploymentRuntimeConfig
 metadata:
   name: gcp-config
 spec:
-  deploymentTemplate:
-    spec:
-      selector: {}
-      template:
-        spec:
-          serviceAccountName: crossplane-gcp
+  serviceAccountTemplate:
+    metadata:
+      name: crossplane-gcp

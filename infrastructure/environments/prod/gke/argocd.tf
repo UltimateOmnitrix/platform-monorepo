@@ -71,18 +71,35 @@ resource "helm_release" "argocd" {
   # ]
 
 
-  # ✅ UPDATED CONFIGURATION
+  # # ✅ UPDATED CONFIGURATION
+  # values = [
+  #   yamlencode({
+  #     server = {
+  #       service = {
+  #         # Change type to NodePort
+  #         type = "NodePort"
+  #         # Define specific ports so they don't change randomly
+  #         nodePorts = {
+  #           http  = 30080
+  #           https = 30443
+  #         }
+  #       }
+  #       replicas = 1
+  #     }
+  #   })
+  # ]
+
+
+  # ✅ UPDATED CONFIGURATION FOR LOAD BALANCER
   values = [
     yamlencode({
       server = {
         service = {
-          # Change type to NodePort
-          type = "NodePort"
-          # Define specific ports so they don't change randomly
-          nodePorts = {
-            http  = 30080
-            https = 30443
-          }
+          # CHANGE THIS: Switch from NodePort to LoadBalancer
+          type = "LoadBalancer"
+
+          # You can remove the 'nodePorts' section now, or keep it. 
+          # The LoadBalancer will automatically assign the external IP.
         }
         replicas = 1
       }

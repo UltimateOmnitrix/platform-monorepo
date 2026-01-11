@@ -1,8 +1,8 @@
-# apiVersion: gcp.upbound.io/v1beta1
-# kind: ProviderConfig
-# metadata:
-#   name: default
-# spec:
-#   projectID: platformproject-481722
-#   credentials:
-#     source: InjectedIdentity
+apiVersion: gcp.upbound.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: default
+spec:
+  projectID: platformproject-481722
+  credentials:
+    source: InjectedIdentity

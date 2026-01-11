@@ -91,7 +91,9 @@ resource "google_service_account_iam_member" "crossplane_bind" {
   #provider-gcp-storage-6c18018c2da3          0         11m
   #upbound-provider-family-gcp-e00a6bd044c9   0         11m
 
-  member = "serviceAccount:${var.project_id}.svc.id.goog[crossplane-system/provider-gcp-storage-6c18018c2da3]"
+  #member = "serviceAccount:${var.project_id}.svc.id.goog[crossplane-system/provider-gcp-storage-6c18018c2da3]"
+
+  member = "serviceAccount:${var.project_id}.svc.id.goog[crossplane-system/crossplane-gcp]"
 
   # ✅ This works here because 'module.gke' is defined in THIS file
   depends_on = [module.gke]

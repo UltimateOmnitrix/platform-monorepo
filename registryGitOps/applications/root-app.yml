@@ -1,3 +1,5 @@
+## DAY -04
+
 # root-app.yml is the entry point into GitOps, the root-app.yml file is the parent file of all the application
 
 # My understiand about this file is root-app.yml file tells ArgoCd where in Git to find other Argo CD application &

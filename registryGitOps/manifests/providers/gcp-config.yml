@@ -1,8 +1,14 @@
+## this tells the provider whenever u create GCP resources: use this projectID,
+## & use the credential from the K8 workload identity...
+
 apiVersion: gcp.upbound.io/v1beta1
 kind: ProviderConfig
 metadata:
   name: default
 spec:
   projectID: platformproject-481722
+
+  ## InjectedIdentity: means my pod proves its identity using Googlce cloud automatically
+  ## using K8 service account....
   credentials:
     source: InjectedIdentity

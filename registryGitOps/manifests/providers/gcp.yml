@@ -1,8 +1,25 @@
+### this is for the provider, to install the GCP storage provider plugin..
+
+## package: points to the provider image from Upbound registry
+## this contains controllers that know how to crate GCS buckets....
+
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:
   name: provider-gcp-storage
+
 spec:
   package: xpkg.upbound.io/upbound/provider-gcp-storage:v2.2.0
+
+  ## runtimeConfigRef:
+  # runtime: when something is running (a pod running)
+  # config: configuratino (settings)
+  # ref: reference (a pointer to another object)
+  # “A pointer to the configuration that should be used when this thing is running.”
+
+  # at the rutnin this pulls gcp-config adn this tells crossplane which service account to use ,
+  ## and that SA is alrady linked to Workload identity...
+
+  ## next this calls the Controller-config.yml
   runtimeConfigRef:
     name: gcp-config

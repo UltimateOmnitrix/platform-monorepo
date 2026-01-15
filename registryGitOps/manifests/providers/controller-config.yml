@@ -1,3 +1,8 @@
+## this tells when running provider pod, us K8 service account name crossplane-gcp...
+
+## this tells when u start the provider pod, run it using K8 serviceaccount named crossplane-gcp..
+## the only job is which k8 SA should the provider pod use...
+
 apiVersion: pkg.crossplane.io/v1beta1
 kind: DeploymentRuntimeConfig
 metadata:

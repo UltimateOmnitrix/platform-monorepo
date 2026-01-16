@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: istio-config-for-mTLS
+  name: istio-config
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io

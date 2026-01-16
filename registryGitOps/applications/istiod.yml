@@ -10,9 +10,9 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 
-annotations:
-  # ✅ THIS TELLS ARGOCD: "WAIT FOR WAVE 1 TO FINISH, THEN START ME"
-  argocd.argoproj.io/sync-wave: "2"
+  annotations:
+    # ✅ THIS TELLS ARGOCD: "WAIT FOR WAVE 1 TO FINISH, THEN START ME"
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   project: default
   source:

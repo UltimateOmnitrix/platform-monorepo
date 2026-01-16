@@ -1,7 +1,8 @@
 ## this is for the control plane of istio
 ##  This takes care of certificate maangmetn, side car injection and other stuff
 
-apiVersion: argoproj.io/v1alpha1 # Number '1', not letter 'l'
+# apiVersion: argoproj.io/v1alpha1 # Number '1', not letter 'l'
+apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: istiod

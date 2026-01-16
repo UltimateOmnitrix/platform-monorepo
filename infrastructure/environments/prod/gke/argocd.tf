@@ -113,7 +113,7 @@ resource "helm_release" "argocd" {
 # Reserve static IP for ArgoCD LoadBalancer
 resource "google_compute_address" "argocd_static_ip" {
   name         = "argocd-static-ip"
-  region       = var.region
+  region       = "us-central1"
   address_type = "EXTERNAL"
   description  = "Static IP for ArgoCD LoadBalancer"
 }

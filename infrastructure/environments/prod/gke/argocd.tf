@@ -41,7 +41,8 @@ resource "helm_release" "argocd" {
   # CRITICAL: Must wait for nodes to be online
   depends_on = [
     #google_container_node_pool.primary_nodes
-    module.gke
+    module.gke,
+    google_compute_address.argocd_static_ip
   ]
 
 
@@ -96,7 +97,8 @@ resource "helm_release" "argocd" {
       server = {
         service = {
           # CHANGE THIS: Switch from NodePort to LoadBalancer
-          type = "LoadBalancer"
+          type           = "LoadBalancer"
+          loadBalancerIP = google_compute_address.argocd_static_ip.address
 
           # You can remove the 'nodePorts' section now, or keep it. 
           # The LoadBalancer will automatically assign the external IP.
@@ -105,4 +107,18 @@ resource "helm_release" "argocd" {
       }
     })
   ]
+}
+
+
+# Reserve static IP for ArgoCD LoadBalancer
+resource "google_compute_address" "argocd_static_ip" {
+  name         = "argocd-static-ip"
+  region       = var.region
+  address_type = "EXTERNAL"
+  description  = "Static IP for ArgoCD LoadBalancer"
+}
+# Output the IP for reference
+output "argocd_static_ip" {
+  value       = google_compute_address.argocd_static_ip.address
+  description = "Static IP address for ArgoCD"
 }

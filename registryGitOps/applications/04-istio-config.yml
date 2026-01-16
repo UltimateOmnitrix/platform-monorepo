@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: istio-config
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "4" # Apply this AFTER Gateway (Wave 3)
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/UltimateOmnitrix/platform-monorepo.git
+    targetRevision: main
+    path: registryGitOps/manifests/istio-config
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: istio-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

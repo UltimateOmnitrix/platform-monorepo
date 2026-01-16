@@ -1,0 +1,16 @@
+## this deals with the mTLS or TLS verification
+## the Peerauthencation is the Istio policy that tells sidecars: " to access encrypted  & identity-verified connections only "
+
+## it deposn on mode you select
+## PERMISSIVE -> allow both plain text and mTLS
+## STRICT -> allow only mTLS
+## DISABLE -> allow both plain text and mTLS
+
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default-strict-mode
+  namespace: istio-system # Putting it here makes it apply to the ENTIRE mesh (Global Policy)
+spec:
+  mtls:
+    mode: STRICT

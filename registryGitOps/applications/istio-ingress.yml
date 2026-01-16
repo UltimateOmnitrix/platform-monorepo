@@ -16,6 +16,9 @@ spec:
     targetRevision: 1.27.0 # Matches your Control Plane
     helm:
       releaseName: istio-ingressgateway
+      values: |
+        service:
+          type: ClusterIP
   destination:
     server: https://kubernetes.default.svc
     namespace: istio-system

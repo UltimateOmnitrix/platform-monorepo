@@ -1,25 +1,25 @@
-apiVersion:
-kind:
-metadata:
-  name:
-  namespace:
-  finalizers:
-    -
+# apiVersion:
+# kind:
+# metadata:
+#   name:
+#   namespace:
+#   finalizers:
+#     -
 
-spec:
-  project:
-  source:
-    repoURL:
-    chart:
-    targetRevision:
-    helm:
-      releaseName:
-  destination:
-    server:
-    namespace:
-  syncPolicy:
-    automated:
-      prune:
-      selfHeal:
-    syncOptions:
-      -
+# spec:
+#   project:
+#   source:
+#     repoURL:
+#     chart:
+#     targetRevision:
+#     helm:
+#       releaseName:
+#   destination:
+#     server:
+#     namespace:
+#   syncPolicy:
+#     automated:
+#       prune:
+#       selfHeal:
+#     syncOptions:
+#       -

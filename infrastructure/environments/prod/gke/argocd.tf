@@ -42,7 +42,7 @@ resource "helm_release" "argocd" {
   depends_on = [
     #google_container_node_pool.primary_nodes
     module.gke,
-    google_compute_address.argocd_static_ip
+    google_compute_address.argocd_static_ip # Added the below part to get that static LB ip for argocd... check in the output of this file for the ip
   ]
 
 
@@ -97,7 +97,9 @@ resource "helm_release" "argocd" {
       server = {
         service = {
           # CHANGE THIS: Switch from NodePort to LoadBalancer
-          type           = "LoadBalancer"
+          type = "LoadBalancer"
+
+          ### Added the below part to get that static LB ip for argocd...
           loadBalancerIP = google_compute_address.argocd_static_ip.address
 
           # You can remove the 'nodePorts' section now, or keep it. 

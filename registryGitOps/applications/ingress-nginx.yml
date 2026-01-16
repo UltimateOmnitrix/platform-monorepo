@@ -44,7 +44,7 @@ spec:
       values: |
         controller:
           service:
-            type: ClusterIP
+            type: NodePort
   destination:
     server: https://kubernetes.default.svc
     namespace: ingress-nginx

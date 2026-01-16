@@ -1,50 +1,50 @@
-# ## this is for the control plane of istio
-# ##  This takes care of certificate maangmetn, side car injection and other stuff
+## this is for the control plane of istio
+##  This takes care of certificate maangmetn, side car injection and other stuff
 
-# # apiVersion: argoproj.io/v1alpha1 # Number '1', not letter 'l'
-# apiVersion: argoproj.io/v1alpha1
-# kind: Application
-# metadata:
-#   name: istiod
-#   namespace: argocd
-#   finalizers:
-#     - resources-finalizer.argocd.argoproj.io
+# apiVersion: argoproj.io/v1alpha1 # Number '1', not letter 'l'
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: istiod
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 
-#   annotations:
-#     # ✅ THIS TELLS ARGOCD: "WAIT FOR WAVE 1 TO FINISH, THEN START ME"
-#     argocd.argoproj.io/sync-wave: "2"
-# spec:
-#   project: default
-#   source:
-#     repoURL: https://istio-release.storage.googleapis.com/charts
-#     chart: istiod
-#     targetRevision: 1.27.0
-#     helm:
-#       releaseName: istiod
-#   destination:
-#     server: https://kubernetes.default.svc
-#     namespace: istio-system
-#   syncPolicy:
-#     automated:
-#       prune: true
-#       selfHeal: true
-#     syncOptions:
-#       - CreateNamespace=true
+  annotations:
+    # ✅ THIS TELLS ARGOCD: "WAIT FOR WAVE 1 TO FINISH, THEN START ME"
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: default
+  source:
+    repoURL: https://istio-release.storage.googleapis.com/charts
+    chart: istiod
+    targetRevision: 1.27.0
+    helm:
+      releaseName: istiod
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: istio-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
 
-#   ## There are two types of webhooks in here
-#   ## Mutating Webhooks -> this can MODIFY objects
-#   ## Validating Webhooks -> can ACCEPT or REJECT objects these rules are stored in MutatingWebhookConfiguration, ValidatingWebhookConfiguration
-#   ignoreDifferences:
-#     # Ignore CA Bundle changes managed by Istio internally to prevent sync flapping
-#     - group: admissionregistration.k8s.io
-#       kind: ValidatingWebhookConfiguration
-#       jsonPointers:
-#         - /webhooks/0/clientConfig/caBundle
-#         - /webhooks/0/failurePolicy
-#     - group: admissionregistration.k8s.io
-#       kind: MutatingWebhookConfiguration
-#       jsonPointers:
-#         - /webhooks/0/clientConfig/caBundle
-#         - /webhooks/0/failurePolicy
-# ## the CA Bundle is for k8 wanan talk to Istio's webhook, it verifies istiod's TLS certificate using the CA stored in caBundle...
-# ## the istio will be rotating the CA bundle everyday, if argocd detects this if thinks as a drift and tries to fix it, which results in sync flapping, so we ignore this diff...
+  ## There are two types of webhooks in here
+  ## Mutating Webhooks -> this can MODIFY objects
+  ## Validating Webhooks -> can ACCEPT or REJECT objects these rules are stored in MutatingWebhookConfiguration, ValidatingWebhookConfiguration
+  ignoreDifferences:
+    # Ignore CA Bundle changes managed by Istio internally to prevent sync flapping
+    - group: admissionregistration.k8s.io
+      kind: ValidatingWebhookConfiguration
+      jsonPointers:
+        - /webhooks/0/clientConfig/caBundle
+        - /webhooks/0/failurePolicy
+    - group: admissionregistration.k8s.io
+      kind: MutatingWebhookConfiguration
+      jsonPointers:
+        - /webhooks/0/clientConfig/caBundle
+        - /webhooks/0/failurePolicy
+## the CA Bundle is for k8 wanan talk to Istio's webhook, it verifies istiod's TLS certificate using the CA stored in caBundle...
+## the istio will be rotating the CA bundle everyday, if argocd detects this if thinks as a drift and tries to fix it, which results in sync flapping, so we ignore this diff...

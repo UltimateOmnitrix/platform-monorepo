@@ -1,54 +1,26 @@
-# # ## the istio-base is for isntalling
-# # ## iinstalls custom resources like Virutal Services, Destination RUles, Gateway
+# ## the istio-base is for isntalling
+# ## iinstalls custom resources like Virutal Services, Destination RUles, Gateway
 
-# # apiVersion: argoproj.io/v1alpha1 #as this is argocd gonna pull up we gonna use the argocd api
-# # kind: Application # this is a argocd custom application
-# # metadata:
-# #   name: istio-base
-# #   namespace: argocd
-# #   finalizers:
-# #     - resources-finalizer.argocd.argoproj.io
-# #       ## this tells the argocd to install this first mean this creates the applicatoin set first then it goes istiod ok
-# #   annotations:
-# #     # ✅ THIS TELLS ARGOCD: "I AM FIRST"
-# #     argocd.argoproj.io/sync-wave: "1"
-
-# # spec:
-# #   project: default
-# #   source:
-# #     repoURL: https://istio-release.storage.googleapis.com/charts
-# #     chart: base ## this is the name of the chart, if you go to the artifact hub, you can view this name at the top of the page
-# #     targetRevision: 1.27 ## this is the version of the chart
-# #     helm:
-# #       releaseName: istio-base ## this just a name which you can give (a custom name I say)
-# #   destination:
-# #     server: https://kubernetes.default.svc
-# #     namespace: istio-system
-# #   syncPolicy:
-# #     automated:
-# #       prune: true
-# #       selfHeal: true
-# #     syncOptions:
-# #       - CreateNamespace=true
-
-# apiVersion: argoproj.io/v1alpha1 # ✅ FIXED (was 'vlalpha1')
-# kind: Application
+# apiVersion: argoproj.io/v1alpha1 #as this is argocd gonna pull up we gonna use the argocd api
+# kind: Application # this is a argocd custom application
 # metadata:
 #   name: istio-base
 #   namespace: argocd
 #   finalizers:
 #     - resources-finalizer.argocd.argoproj.io
+#       ## this tells the argocd to install this first mean this creates the applicatoin set first then it goes istiod ok
 #   annotations:
-#     # ✅ Wave 1: Installs CRDs first
+#     # ✅ THIS TELLS ARGOCD: "I AM FIRST"
 #     argocd.argoproj.io/sync-wave: "1"
+
 # spec:
 #   project: default
 #   source:
 #     repoURL: https://istio-release.storage.googleapis.com/charts
-#     chart: base
-#     targetRevision: 1.27.0
+#     chart: base ## this is the name of the chart, if you go to the artifact hub, you can view this name at the top of the page
+#     targetRevision: 1.27 ## this is the version of the chart
 #     helm:
-#       releaseName: istio-base
+#       releaseName: istio-base ## this just a name which you can give (a custom name I say)
 #   destination:
 #     server: https://kubernetes.default.svc
 #     namespace: istio-system
@@ -58,10 +30,38 @@
 #       selfHeal: true
 #     syncOptions:
 #       - CreateNamespace=true
-#   ignoreDifferences:
-#     # Ignore CA Bundle changes managed by Istio internally to prevent sync flapping
-#     - group: admissionregistration.k8s.io
-#       kind: ValidatingWebhookConfiguration
-#       jsonPointers:
-#         - /webhooks/0/clientConfig/caBundle
-#         - /webhooks/0/failurePolicy
+
+apiVersion: argoproj.io/v1alpha1 # ✅ FIXED (was 'vlalpha1')
+kind: Application
+metadata:
+  name: istio-base
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    # ✅ Wave 1: Installs CRDs first
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: default
+  source:
+    repoURL: https://istio-release.storage.googleapis.com/charts
+    chart: base
+    targetRevision: 1.27.0
+    helm:
+      releaseName: istio-base
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: istio-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+  ignoreDifferences:
+    # Ignore CA Bundle changes managed by Istio internally to prevent sync flapping
+    - group: admissionregistration.k8s.io
+      kind: ValidatingWebhookConfiguration
+      jsonPointers:
+        - /webhooks/0/clientConfig/caBundle
+        - /webhooks/0/failurePolicy

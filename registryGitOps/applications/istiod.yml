@@ -38,10 +38,10 @@ spec:
     - group: admissionregistration.k8s.io
       kind: ValidatingWebhookConfiguration
       jsonPointers:
-        - /webhooks/0/clientConfig/caBundle
+        - .webhooks[].clientConfig.caBundle
     - group: admissionregistration.k8s.io
       kind: MutatingWebhookConfiguration
       jsonPointers:
-        - /webhooks/0/clientConfig/caBundle
+        - .webhooks[].clientConfig.caBundle
 ## the CA Bundle is for k8 wanan talk to Istio's webhook, it verifies istiod's TLS certificate using the CA stored in caBundle...
 ## the istio will be rotating the CA bundle everyday, if argocd detects this if thinks as a drift and tries to fix it, which results in sync flapping, so we ignore this diff...

@@ -41,6 +41,10 @@ spec:
     # this relase name is used to perform upgrades, rollbacks
     helm:
       releaseName: ingress-nginx
+      values: |
+        controller:
+          service:
+            type: ClusterIP
   destination:
     server: https://kubernetes.default.svc
     namespace: ingress-nginx

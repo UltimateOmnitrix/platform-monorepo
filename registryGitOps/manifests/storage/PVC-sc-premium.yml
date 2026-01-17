@@ -1,0 +1,14 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass # Helps in create what kind of persistnet storage to create when app asks for it
+metadata:
+  name: standard-hdd-rwo # just label with standard-hdd-rwo is label and rwo mean ReadWriteOnce...
+provisioner: pd.csi.storage.gke.io # using this CSI you can create the storage classes mean auto create
+
+# using the parameeters you can define the storage type u want HDD, SSD in here..
+# CSI drivers sees this & calls a pd-standard disk of requested size..
+parameters:
+  type: pd-standard # this is HDD cheap & best
+  replication-type: none # we restricting this for only to zonal for cheap
+volumeBindingMode: WaitForFirstConsumer ## this is a hardcoded one, this means create disk only when a Pod is created..
+allowVolumeExpansion: true # this lests to allow increase & descrse disk size without deleting it...
+reclaimPolicy: Delete # this is for when the PVC is deleted, the disk is deleted as well , *** if you want to keep the disk, use Retain even the PVC is deleted, data is stored in the disk

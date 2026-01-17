@@ -12,20 +12,20 @@ spec:
     requests:
       storage: 1Gi # Tiny 1GB disk
 ---
-# # 2. The Customer (The Pod mounting the disk)
-# apiVersion: v1
-# kind: Pod
-# metadata:
-#   name: verification-pod
-#   namespace: default
-# spec:
-#   containers:
-#   - name: nginx
-#     image: nginx:alpine
-#     volumeMounts:
-#     - mountPath: "/usr/share/nginx/html"
-#       name: my-storage
-#   volumes:
-#   - name: my-storage
-#     persistentVolumeClaim:
-#       claimName: verification-pvc
+# 2. The Customer (The Pod mounting the disk)
+apiVersion: v1
+kind: Pod
+metadata:
+  name: verification-pod
+  namespace: default
+spec:
+  containers:
+    - name: nginx
+      image: nginx:alpine
+      volumeMounts:
+        - mountPath: "/usr/share/nginx/html"
+          name: my-storage
+  volumes:
+    - name: my-storage
+      persistentVolumeClaim:
+        claimName: verification-pvc

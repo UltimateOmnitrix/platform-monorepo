@@ -60,6 +60,10 @@ spec:
                 user: ${POSTGRES_USER}
                 password: ${POSTGRES_PASSWORD}
                 ssl: { rejectUnauthorized: false }
+          catalog:
+            locations:
+              - type: url
+                target: https://github.com/UltimateOmnitrix/platform-monorepo/blob/main/catalog-info.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: default

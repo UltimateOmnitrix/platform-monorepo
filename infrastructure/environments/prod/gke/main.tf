@@ -104,3 +104,9 @@ output "crossplane_email" {
   description = "The Google Service Account email for Crossplane"
   value       = google_service_account.crossplane.email
 }
+
+
+
+
+
+

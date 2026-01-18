@@ -10,60 +10,62 @@ spec:
   source:
     repoURL: https://backstage.github.io/charts
     chart: backstage
-    targetRevision: 2.6.3 # ✅ Latest Chart Version
+    targetRevision: 2.6.3
     helm:
       releaseName: backstage
       values: |
-        # ✅ Latest Stable App Image
-        image:
-          registry: ghcr.io
-          repository: backstage/backstage
-          tag: 1.46.0
-          pullPolicy: IfNotPresent
-
         # ✅ Disable local DB (Use Cloud SQL)
         postgresql:
           enabled: false
 
-        # ✅ Inject Secrets
-        extraEnvVars:
-          - name: POSTGRES_HOST
-            valueFrom:
-              secretKeyRef:
-                name: backstage-pg-secret
-                key: endpoint
-          - name: POSTGRES_PORT
-            value: "5432"
-          - name: POSTGRES_USER
-            valueFrom:
-              secretKeyRef:
-                name: backstage-pg-secret
-                key: username
-          - name: POSTGRES_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: backstage-pg-secret
-                key: password
+        # ✅ All Backstage config goes under 'backstage' key
+        backstage:
+          image:
+            registry: ghcr.io
+            repository: backstage/backstage
+            tag: 1.46.0
+            pullPolicy: IfNotPresent
 
-        # ✅ Application Config
-        appConfig:
-          app:
-            baseUrl: http://localhost:7007
-            title: Omnitrix Portal
-          backend:
-            baseUrl: http://localhost:7007
-            database:
-              client: pg
-              connection:
-                host: ${POSTGRES_HOST}
-                port: ${POSTGRES_PORT}
-                user: ${POSTGRES_USER}
-                password: ${POSTGRES_PASSWORD}
-                ssl: { rejectUnauthorized: false }
-          catalog:
-            locations:
-              - type: url
-                target: https://raw.githubusercontent.com/UltimateOmnitrix/platform-monorepo/main/catalog-info.yaml
+          # ✅ Inject Database Secrets as Environment Variables
+          extraEnvVars:
+            - name: POSTGRES_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: backstage-pg-secret
+                  key: endpoint
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: backstage-pg-secret
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: backstage-pg-secret
+                  key: password
+
+          # ✅ Application Configuration
+          appConfig:
+            app:
+              baseUrl: http://localhost:7007
+              title: Omnitrix Portal
+            backend:
+              baseUrl: http://localhost:7007
+              database:
+                client: pg
+                connection:
+                  host: ${POSTGRES_HOST}
+                  port: ${POSTGRES_PORT}
+                  user: ${POSTGRES_USER}
+                  password: ${POSTGRES_PASSWORD}
+                  ssl:
+                    rejectUnauthorized: false
+            catalog:
+              locations:
+                - type: url
+                  target: https://raw.githubusercontent.com/UltimateOmnitrix/platform-monorepo/main/catalog-info.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: default

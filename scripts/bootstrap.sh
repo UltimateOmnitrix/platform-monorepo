@@ -38,6 +38,7 @@ gcloud services enable \
     iam.googleapis.com \
     sts.googleapis.com \
     iamcredentials.googleapis.com \
+    sqladmin.googleapis.com \
     compute.googleapis.com --project="$PROJECT_ID"
 
 # Use gcloud storage for native authentication integration

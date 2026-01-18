@@ -1,0 +1,28 @@
+# ## when this sees it calls the GCP cloud sql API...
+# apiVersion: sql.gcp.upbound.io/v1beta1
+# kind: DatabaseInstance
+# metadata:
+#   name: backstage-db
+#   labels:
+#     app: backstage
+# spec:
+#   forProvider:
+#     databaseVersion: POSTGRES_17
+#     region: us-central1
+#     settings:
+#       - tier: db-f1-micro # micro machine type — free/cheap for labs.
+#         ipConfiguration:
+#           - ipv4Enabled: true
+#             authorizedNetworks:
+#               - value: "0.0.0.0/0" # Allow public access with no restrictions
+
+#   ## these are for the secret, as after the crosplane launches the Cloud SQL instance, it will create a secret...
+#   ## The secret has info like Database (endpoint, port, user, password)
+#   ## Crossplane will create the Kubernetes Secret backstage-pg-secret inside the default namespace.
+#   writeConnectionSecretToRef:
+#     name: backstage-pg-secret
+#     namespace: default
+
+#   ## the below tells which project to use from the gcp-config.yml file
+#   providerConfigRef:
+#     name: default

@@ -5,4 +5,11 @@ metadata:
 spec:
   provider:
     gcpsm:
-      projectID: platformproject-481722 # Your Project ID
+      projectID: platformproject-481722
+      auth:
+        workloadIdentity:
+          clusterLocation: us-central1-a # Your cluster zone
+          clusterName: omnitrix-cluster # Your cluster name
+          serviceAccountRef:
+            name: external-secrets # The KSA name
+            namespace: external-secrets # The namespace

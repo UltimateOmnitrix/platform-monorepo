@@ -1,0 +1,15 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: omnitrix-platform
+  description: The central platform engineering repository.
+  tags:
+    - platform
+    - gitops
+    - terraform
+  annotations:
+    github.com/project-slug: UltimateOmnitrix/platform-monorepo
+spec:
+  type: library
+  lifecycle: production
+  owner: platform-team

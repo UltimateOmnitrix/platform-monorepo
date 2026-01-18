@@ -11,6 +11,7 @@ spec:
     region: us-central1
     settings:
       - tier: db-f1-micro # micro machine type — free/cheap for labs.
+        edition: "ENTERPRISE"
         ipConfiguration:
           - ipv4Enabled: true
             authorizedNetworks:

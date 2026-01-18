@@ -63,7 +63,7 @@ spec:
           catalog:
             locations:
               - type: url
-                target: https://github.com/UltimateOmnitrix/platform-monorepo/blob/main/catalog-info.yaml
+                target: https://raw.githubusercontent.com/UltimateOmnitrix/platform-monorepo/main/catalog-info.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: default

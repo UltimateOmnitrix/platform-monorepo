@@ -1,13 +1,13 @@
-apiVersion: storage.gcp.upbound.io/v1beta1
-kind: Bucket
-metadata:
-  name: sai-temp-4321
-  namespace: default
-  annotations:
-    crossplane.io/external-name: sai-temp-4321
-spec:
-  forProvider:
-    location: US
-    storageClass: STANDARD
-  providerConfigRef:
-    name: default
+# apiVersion: storage.gcp.upbound.io/v1beta1
+# kind: Bucket
+# metadata:
+#   name: sai-temp-4321
+#   namespace: default
+#   annotations:
+#     crossplane.io/external-name: sai-temp-4321
+# spec:
+#   forProvider:
+#     location: US
+#     storageClass: STANDARD
+#   providerConfigRef:
+#     name: default

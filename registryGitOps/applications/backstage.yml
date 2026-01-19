@@ -48,6 +48,9 @@ spec:
             app:
               baseUrl: http://localhost:7007
               title: Omnitrix Portal
+            auth:
+              providers:
+                guest: {}
             backend:
               baseUrl: http://localhost:7007
               reading:

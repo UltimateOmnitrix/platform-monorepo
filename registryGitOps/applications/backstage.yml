@@ -23,13 +23,13 @@ spec:
             repository: backstage/backstage
             tag: 1.46.0
             pullPolicy: IfNotPresent
-          
+
           extraEnvVars:
             - name: POSTGRES_HOST
               valueFrom:
                 secretKeyRef:
                   name: backstage-pg-secret
-                  key: endpoint # ✅ FIXED: Changed publicIP to endpoint
+                  key: publicIP
             - name: POSTGRES_PORT
               value: "5432"
             - name: POSTGRES_USER
@@ -38,7 +38,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: backstage-db-password
-                  key: publicIP
+                  key: password
 
           appConfig:
             app:

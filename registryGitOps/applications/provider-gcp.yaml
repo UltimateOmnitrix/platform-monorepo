@@ -11,6 +11,8 @@ spec:
     repoURL: https://github.com/UltimateOmnitrix/platform-monorepo.git
     targetRevision: main
     path: registryGitOps/manifests/providers
+    directory:
+      recurse: true
   destination:
     server: https://kubernetes.default.svc
     namespace: crossplane-system

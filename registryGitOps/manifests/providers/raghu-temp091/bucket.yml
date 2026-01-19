@@ -1,0 +1,13 @@
+apiVersion: storage.gcp.upbound.io/v1beta1
+kind: Bucket
+metadata:
+  name: raghu-temp091
+  namespace: default
+  annotations:
+    crossplane.io/external-name: raghu-temp091
+spec:
+  forProvider:
+    location: US
+    storageClass: STANDARD
+  providerConfigRef:
+    name: default

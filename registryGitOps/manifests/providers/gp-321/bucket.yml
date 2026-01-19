@@ -1,0 +1,13 @@
+apiVersion: storage.gcp.upbound.io/v1beta1
+kind: Bucket
+metadata:
+  name: gp-321
+  namespace: default
+  annotations:
+    crossplane.io/external-name: gp-321
+spec:
+  forProvider:
+    location: US
+    storageClass: STANDARD
+  providerConfigRef:
+    name: default

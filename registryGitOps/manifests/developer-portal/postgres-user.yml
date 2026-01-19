@@ -1,0 +1,19 @@
+apiVersion: sql.gcp.upbound.io/v1beta1
+kind: User
+metadata:
+  name: backstage-user
+  labels:
+    app: backstage
+spec:
+  forProvider:
+    instanceRef:
+      name: backstage-db
+    passwordSecretRef:
+      key: password
+      name: backstage-db-password
+      namespace: default
+  providerConfigRef:
+    name: default
+  writeConnectionSecretToRef:
+    name: backstage-user-secret
+    namespace: default

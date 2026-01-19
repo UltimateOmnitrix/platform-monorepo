@@ -48,6 +48,8 @@ spec:
               providers:
                 guest: {}
             backend:
+              auth:
+                dangerouslyDisableDefaultAuthPolicy: true
               baseUrl: http://localhost:7007
               reading:
                 allow:

@@ -1,0 +1,64 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: create-gcs-bucket
+  title: Create Google Cloud Storage Bucket
+  description: Provisions a new GCS Bucket using Crossplane.
+  tags:
+    - gcp
+    - storage
+    - crossplane
+spec:
+  owner: platform-team
+  type: service
+
+  # 1. The Form the User Sees
+  parameters:
+    - title: Bucket Configuration
+      required:
+        - name
+        - location
+      properties:
+        name:
+          title: Bucket Name
+          type: string
+          description: Unique name for the bucket (e.g., my-app-logs)
+          ui:autofocus: true
+        location:
+          title: Location
+          type: string
+          default: US
+          enum:
+            - US
+            - EU
+            - ASIA
+          description: The region for the bucket.
+
+  # 2. The Actions Backstage Takes
+  steps:
+    - id: fetch-base
+      name: Fetch Skeleton
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          location: ${{ parameters.location }}
+
+    - id: publish
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        allowedHosts: ["github.com"]
+        description: "New GCS Bucket: ${{ parameters.name }}"
+        repoUrl: "github.com?repo=platform-monorepo&owner=UltimateOmnitrix"
+        # ⚠️ NOTE: This will try to create a Pull Request or Commit to the Repo
+        # For simplicity, we create a new file in the providers folder:
+        defaultBranch: main
+        targetPath: registryGitOps/manifests/providers/${{ parameters.name }}
+
+  # 3. The Output Links
+  output:
+    links:
+      - title: Go to Repository
+        url: ${{ steps.publish.output.remoteUrl }}

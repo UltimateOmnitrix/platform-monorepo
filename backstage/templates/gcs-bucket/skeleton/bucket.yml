@@ -1,0 +1,13 @@
+apiVersion: storage.gcp.upbound.io/v1beta1
+kind: Bucket
+metadata:
+  name: ${{ values.name }}
+  namespace: default
+  annotations:
+    crossplane.io/external-name: ${{ values.name }}
+spec:
+  forProvider:
+    location: ${{ values.location }}
+    storageClass: STANDARD
+  providerConfigRef:
+    name: default

@@ -64,10 +64,22 @@ spec:
                   password: ${POSTGRES_PASSWORD}
                   ssl:
                     rejectUnauthorized: false
+            
+            # ✅ UPDATED CATALOG SECTION
             catalog:
+              # 1. Allow Templates to be registered
+              rules:
+                - allow: [Component, System, API, Resource, Location, Template]
+              
+              # 2. Auto-register your files
               locations:
+                # The main catalog passport
                 - type: url
                   target: https://raw.githubusercontent.com/UltimateOmnitrix/platform-monorepo/main/catalog-info.yaml
+                
+                # The GCS Bucket Template (Note: using .yml extension)
+                - type: url
+                  target: https://raw.githubusercontent.com/UltimateOmnitrix/platform-monorepo/main/backstage/templates/gcs-bucket/template.yml
   destination:
     server: https://kubernetes.default.svc
     namespace: default

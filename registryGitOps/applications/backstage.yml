@@ -25,6 +25,13 @@ spec:
             pullPolicy: IfNotPresent
 
           extraEnvVars:
+            # ✅ 1. Inject the GitHub Token
+            - name: GITHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: backstage-github-token
+                  key: GITHUB_TOKEN
+            # Database Vars
             - name: POSTGRES_HOST
               valueFrom:
                 secretKeyRef:
@@ -44,9 +51,13 @@ spec:
             app:
               baseUrl: http://localhost:7007
               title: Omnitrix Portal
+            
+            # ✅ 2. Add Integrations Block
             integrations:
               github:
                 - host: github.com
+                  token: ${GITHUB_TOKEN}
+
             auth:
               providers:
                 guest: {}
@@ -67,22 +78,14 @@ spec:
                   password: ${POSTGRES_PASSWORD}
                   ssl:
                     rejectUnauthorized: false
-            
-            # ✅ UPDATED CATALOG SECTION
             catalog:
-              # 1. Allow Templates to be registered
               rules:
                 - allow: [Component, System, API, Resource, Location, Template]
-              
-              # 2. Auto-register your files
               locations:
-                # The main catalog passport
                 - type: url
                   target: https://raw.githubusercontent.com/UltimateOmnitrix/platform-monorepo/main/catalog-info.yaml
-                
-                # The GCS Bucket Template (Note: using .yml extension)
                 - type: url
-                  target: https://raw.githubusercontent.com/UltimateOmnitrix/platform-monorepo/main/backstage/templates/gcs-bucket/template.yml
+                  target: https://github.com/UltimateOmnitrix/platform-monorepo/blob/main/backstage/templates/gcs-bucket/template.yml
   destination:
     server: https://kubernetes.default.svc
     namespace: default

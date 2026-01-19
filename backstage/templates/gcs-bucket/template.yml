@@ -12,7 +12,6 @@ spec:
   owner: platform-team
   type: service
 
-  # 1. The Form the User Sees
   parameters:
     - title: Bucket Configuration
       required:
@@ -34,7 +33,6 @@ spec:
             - ASIA
           description: The region for the bucket.
 
-  # 2. The Actions Backstage Takes
   steps:
     - id: fetch-base
       name: Fetch Skeleton
@@ -46,19 +44,15 @@ spec:
           location: ${{ parameters.location }}
 
     - id: publish
-      name: Publish to GitHub
-      action: publish:github
+      name: Create Pull Request
+      action: publish:github:pull-request
       input:
-        allowedHosts: ["github.com"]
-        description: "New GCS Bucket: ${{ parameters.name }}"
-        repoUrl: "github.com?repo=platform-monorepo&owner=UltimateOmnitrix"
-        # ⚠️ NOTE: This will try to create a Pull Request or Commit to the Repo
-        # For simplicity, we create a new file in the providers folder:
-        defaultBranch: main
-        targetPath: registryGitOps/manifests/providers/${{ parameters.name }}
+        repoUrl: github.com?repo=platform-monorepo&owner=UltimateOmnitrix
+        branchName: bucket-${{ parameters.name }}
+        title: "Add GCS Bucket: ${{ parameters.name }}"
+        description: "Creates a new GCS bucket via Crossplane"
 
-  # 3. The Output Links
   output:
     links:
-      - title: Go to Repository
+      - title: View Pull Request
         url: ${{ steps.publish.output.remoteUrl }}

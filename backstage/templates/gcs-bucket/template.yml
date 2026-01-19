@@ -39,6 +39,7 @@ spec:
       action: fetch:template
       input:
         url: ./skeleton
+        targetPath: registryGitOps/manifests/providers/${{ parameters.name }}
         values:
           name: ${{ parameters.name }}
           location: ${{ parameters.location }}

@@ -1,0 +1,13 @@
+apiVersion: storage.gcp.upbound.io/v1beta1
+kind: Bucket
+metadata:
+  name: arvind-kuppuswamy
+  namespace: default
+  annotations:
+    crossplane.io/external-name: arvind-kuppuswamy
+spec:
+  forProvider:
+    location: US
+    storageClass: STANDARD
+  providerConfigRef:
+    name: default

@@ -1,17 +1,25 @@
+## this template lets users click a form, enter some values & automatically genereate code or infra files in a git repo...
+
+## user enters bucket name & region,
+## backstage generates crosspalne YAMl for a GCS bucket,  backstage creates a pull request in your paltform GitOps repo & after merge, crosspane provisions the bucket in GCP
+
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: create-gcs-bucket
   title: Create Google Cloud Storage Bucket
   description: Provisions a new GCS Bucket using Crossplane.
-  tags:
+  tags: ## these are just labels, you can search for them in backstage
     - gcp
     - storage
     - crossplane
 spec:
   owner: platform-team
-  type: service
+  type: service ## the specs are just lables too cause u find these on the UI, you can search for it in backstage
 
+  ## these parameters defines the input form shown to the user..
+  ## what information do we need from the user to generate ther reesource..
+  ## backstage reads this sectio & automatically builds a UI form...
   parameters:
     - title: Bucket Configuration
       required:
@@ -34,6 +42,7 @@ spec:
           description: The region for the bucket.
 
   steps:
+    ## this step takes the skeleton folder & replaces the values with the values entered by the user in the form..
     - id: fetch-base
       name: Fetch Skeleton
       action: fetch:template
@@ -43,7 +52,7 @@ spec:
         values:
           name: ${{ parameters.name }}
           location: ${{ parameters.location }}
-
+    ## this reaises the PR request & and do a manual merge...
     - id: publish
       name: Create Pull Request
       action: publish:github:pull-request
@@ -53,6 +62,7 @@ spec:
         title: "Add GCS Bucket: ${{ parameters.name }}"
         description: "Creates a new GCS bucket via Crossplane"
 
+  ## this gives the link to the PR in the UI..
   output:
     links:
       - title: View Pull Request

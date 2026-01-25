@@ -1,3 +1,5 @@
+## this creates the user for the backstage to connect to the postgres database...
+
 apiVersion: sql.gcp.upbound.io/v1beta1
 kind: User
 metadata:
@@ -7,13 +9,16 @@ metadata:
 spec:
   forProvider:
     instanceRef:
-      name: backstage-db
+      name: backstage-db ## create this user inside the clodu sql insance named backstage-db...
     passwordSecretRef:
       key: password
-      name: backstage-db-password
+      name: backstage-db-password ## get it from the k8 secrets....
       namespace: default
   providerConfigRef:
     name: default
+
+  ## afete creating this use, crossplane will automatically writes DB host, port , user, pswd , db name into k8 secreeect called backstage-user-secret
+  # as the backstage shold connect to cloud sql, it should know the above details, crossplane writes them automactalliy inot k8 secrets...
   writeConnectionSecretToRef:
     name: backstage-user-secret
     namespace: default

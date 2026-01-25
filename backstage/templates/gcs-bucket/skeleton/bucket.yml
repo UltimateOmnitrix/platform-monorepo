@@ -1,3 +1,6 @@
+## backaste takes form inputs (paramets), maps them to values in fetch:template and replaces ${{ values.name }} with the value entered by the user in the form
+
+## mean the backstage directly (fetch:template) step copies everything inside the skeleton folder & process placeholders like ${{ values.name }}
 apiVersion: storage.gcp.upbound.io/v1beta1
 kind: Bucket
 metadata:

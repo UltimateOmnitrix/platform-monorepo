@@ -14,7 +14,7 @@ spec:
     helm:
       releaseName: backstage
       values: |
-        postgresql:
+        postgresql:  ##### disable the postgresql chart that comes with backstage, it installs the postgresql chart from the chart repo too, instead of this we are using the cloud sql
           enabled: false
 
         backstage:
@@ -24,6 +24,8 @@ spec:
             tag: 1.46.0
             pullPolicy: IfNotPresent
 
+          # These extra vars for the backstage container 
+          # cause backstae needs github access to read reposotories, load catalog & template, create pull requests, etc...
           extraEnvVars:
             # ✅ 1. Inject the GitHub Token
             - name: GITHUB_TOKEN
@@ -31,6 +33,8 @@ spec:
                 secretKeyRef:
                   name: backstage-github-token
                   key: GITHUB_TOKEN
+
+            ## as the Backstage needs to store its internal data like tempalte run logs, user sessions we can't store in github, so we are suing cloud sql as our db passing these variables...
             # Database Vars
             - name: POSTGRES_HOST
               valueFrom:
@@ -47,20 +51,20 @@ spec:
                   name: backstage-db-password
                   key: password
 
-          appConfig:
+          appConfig:  
             app:
-              baseUrl: http://localhost:7007
+              baseUrl: http://localhost:7007   # this PART wehre URL where Backstage runs
               title: Omnitrix Portal
             
             # ✅ 2. Add Integrations Block
             integrations:
               github:
                 - host: github.com
-                  token: ${GITHUB_TOKEN}
+                  token: ${GITHUB_TOKEN}  # this connects the backsgte to gihub to use public github with the github token env variable, as we are using the PAT we don't require the username 
 
             auth:
               providers:
-                guest: {}
+                guest: {}   ## this enables guest login, anyone who opens Backstage can enter with no pswd or username 
             backend:
               auth:
                 dangerouslyDisableDefaultAuthPolicy: true
@@ -81,6 +85,9 @@ spec:
             catalog:
               rules:
                 - allow: [Component, System, API, Resource, Location, Template]
+
+              ## we are passing two locations to backstage, frist is loads your main service catalog like (compontes, systems, API)
+              ## second location is of the template that we created, this template is used to create a new GCS bucket... (like GCS bucket creation, PR creation)
               locations:
                 - type: url
                   target: https://raw.githubusercontent.com/UltimateOmnitrix/platform-monorepo/main/catalog-info.yaml

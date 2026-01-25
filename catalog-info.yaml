@@ -1,3 +1,5 @@
+## this links the git repo to backstage, backstage will load the catalog-info.yaml from the git repo & display it in the UI...
+
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:

@@ -19,6 +19,8 @@ kind: Application
 metadata:
   name: ingress-nginx
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
 
   # finalizer helps to make sure delete everything when we delete the application
   # the case is as we are doing the GitOps, we action is performed like file add, file remove, file uninstall,

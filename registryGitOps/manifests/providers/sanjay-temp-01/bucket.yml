@@ -1,0 +1,16 @@
+## backaste takes form inputs (paramets), maps them to values in fetch:template and replaces sanjay-temp-01 with the value entered by the user in the form
+
+## mean the backstage directly (fetch:template) step copies everything inside the skeleton folder & process placeholders like sanjay-temp-01
+apiVersion: storage.gcp.upbound.io/v1beta1
+kind: Bucket
+metadata:
+  name: sanjay-temp-01
+  namespace: default
+  annotations:
+    crossplane.io/external-name: sanjay-temp-01
+spec:
+  forProvider:
+    location: US
+    storageClass: STANDARD
+  providerConfigRef:
+    name: default

@@ -36,4 +36,4 @@ jobs:
           cd infrastructure/environments/prod/vpc
           # REMOVED: -target
           # ADDED: ../ to find the common prod.tfvars
-          terraform destroy -auto-approve -var-file="/prod.tfvars"
+          terraform destroy -auto-approve -var-file="prod.tfvars"

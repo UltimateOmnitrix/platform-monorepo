@@ -1,3 +1,3 @@
-project_id  = "platformproject-481722" # Your actual Project ID from image_c6e388.png
-region      = "us-central1-a"
-github_repo = "UltimateOmnitrix/platform-monorepo"
+project_id = "platformproject-481722" # Your actual Project ID from image_c6e388.png
+region     = "us-central1-a"
+

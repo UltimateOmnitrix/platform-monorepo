@@ -35,4 +35,4 @@ jobs:
           cd infrastructure/environments/prod/gke
           # REMOVED: -target (not needed with split state)
           # ADDED: ../ to find the common prod.tfvars
-          terraform destroy -auto-approve -var-file="../prod.tfvars"
+          terraform destroy -auto-approve -var-file="/prod.tfvars"

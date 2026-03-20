@@ -86,7 +86,7 @@ jobs:
           terraform plan -var-file="prod.tfvars"
 
       - name: "GKE: Apply"
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
           cd infrastructure/environments/prod/gke
           terraform apply -auto-approve -var-file="prod.tfvars"

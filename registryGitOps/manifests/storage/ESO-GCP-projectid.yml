@@ -5,7 +5,7 @@ metadata:
 spec:
   provider:
     gcpsm:
-      projectID: platformproject-481722
+      projectID: prodaccount
       auth:
         workloadIdentity:
           clusterLocation: us-central1-a # Your cluster zone

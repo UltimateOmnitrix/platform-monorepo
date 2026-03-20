@@ -5,7 +5,7 @@ metadata:
   namespace: default
   annotations:
     ####crossplane.io/external-name: omnitrix-verification-${project_id} # Will replace with your actual ID
-    crossplane.io/external-name: omnitrix-verification-platformproject-481722
+    crossplane.io/external-name: omnitrix-verification-prodaccount
 spec:
   forProvider:
     location: US

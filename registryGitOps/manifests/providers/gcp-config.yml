@@ -6,7 +6,7 @@ kind: ProviderConfig
 metadata:
   name: default
 spec:
-  projectID: platformproject-481722
+  projectID: prodaccount
 
   ## InjectedIdentity: means my pod proves its identity using Googlce cloud automatically
   ## using K8 service account....

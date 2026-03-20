@@ -1,126 +1,126 @@
-# Day 03 
+# # Day 03 
 
-# ------------------------------ ------------------------------ ------------------------------
-# THIS FILE GETS EXECUTED AFTER THE GKE Main.tf completes
-# this file is for to install & continuously manage the argocd in the K8 cluster using argocd..
-# THIS IS CHILD argo cd application whose only job is install argocd, keep it in sync with git repo
-# recreate it if someone breaks it
-# ------------------------------ ------------------------------ ------------------------------
+# # ------------------------------ ------------------------------ ------------------------------
+# # THIS FILE GETS EXECUTED AFTER THE GKE Main.tf completes
+# # this file is for to install & continuously manage the argocd in the K8 cluster using argocd..
+# # THIS IS CHILD argo cd application whose only job is install argocd, keep it in sync with git repo
+# # recreate it if someone breaks it
+# # ------------------------------ ------------------------------ ------------------------------
 
-# installign through terraform with helm provider ok k8 cluster
-
-
-# we are creating namespace even before argocd is installed cause argocd will use this namespace to install argocd
-# why to use this "kubernetes_namespace" why now GKE or somehitng google resource casue, 
-# namespce are managed inside by the k8, gcp or gke manages only the cluster
-# 1. Create the Namespace
-resource "kubernetes_namespace_v1" "argocd" {
-  metadata {
-    name = "argocd"
-  }
-
-  # Wait for the cluster to exist first! this checks until the nodes gets created and started...
-  depends_on = [
-    # google_container_node_pool.primary_nodes
-    module.gke
-  ]
-
-}
-
-# 2. Install ArgoCD via Helm
-resource "helm_release" "argocd" {
-  name       = "argocd"
-  repository = "https://argoproj.github.io/argo-helm"
-  chart      = "argo-cd"
-  version    = "5.46.7" # Stable version
-
-  # this tells k8 namespace to install where terraform created namespace
-  # as metadata is actually a list of objects, we are using index 0 to get the name
-  namespace = kubernetes_namespace_v1.argocd.metadata[0].name
-
-  # CRITICAL: Must wait for nodes to be online
-  depends_on = [
-    #google_container_node_pool.primary_nodes
-    module.gke,
-    google_compute_address.argocd_static_ip # Added the below part to get that static LB ip for argocd... check in the output of this file for the ip
-  ]
+# # installign through terraform with helm provider ok k8 cluster
 
 
-  # Configuration & this is helm value overriding 
-  # we are exposing the argocd with cluster ip cause we are using port forwarding to access it
-  # set {
-  #   name  = "server.service.type"
-  #   value = "ClusterIP" # We will use Port Forwarding to access it
-  # }
+# # we are creating namespace even before argocd is installed cause argocd will use this namespace to install argocd
+# # why to use this "kubernetes_namespace" why now GKE or somehitng google resource casue, 
+# # namespce are managed inside by the k8, gcp or gke manages only the cluster
+# # 1. Create the Namespace
+# resource "kubernetes_namespace_v1" "argocd" {
+#   metadata {
+#     name = "argocd"
+#   }
 
-  # # Disable HA for now to save resources (optional)
-  # set {
-  #   name  = "server.replicas"
-  #   value = "1"
-  # }
+#   # Wait for the cluster to exist first! this checks until the nodes gets created and started...
+#   depends_on = [
+#     # google_container_node_pool.primary_nodes
+#     module.gke
+#   ]
 
-  ## the above throwed up a error using the set, so changed to bewlo ok 
-  # values = [
-  #   yamlencode({
-  #     server = {
-  #       service = {
-  #         type = "ClusterIP"
-  #       }
-  #       replicas = 1 # Run only 1 pod to save money
-  #     }
-  #   })
-  # ]
+# }
 
+# # 2. Install ArgoCD via Helm
+# resource "helm_release" "argocd" {
+#   name       = "argocd"
+#   repository = "https://argoproj.github.io/argo-helm"
+#   chart      = "argo-cd"
+#   version    = "5.46.7" # Stable version
 
-  # # ✅ UPDATED CONFIGURATION
-  # values = [
-  #   yamlencode({
-  #     server = {
-  #       service = {
-  #         # Change type to NodePort
-  #         type = "NodePort"
-  #         # Define specific ports so they don't change randomly
-  #         nodePorts = {
-  #           http  = 30080
-  #           https = 30443
-  #         }
-  #       }
-  #       replicas = 1
-  #     }
-  #   })
-  # ]
+#   # this tells k8 namespace to install where terraform created namespace
+#   # as metadata is actually a list of objects, we are using index 0 to get the name
+#   namespace = kubernetes_namespace_v1.argocd.metadata[0].name
+
+#   # CRITICAL: Must wait for nodes to be online
+#   depends_on = [
+#     #google_container_node_pool.primary_nodes
+#     module.gke,
+#     google_compute_address.argocd_static_ip # Added the below part to get that static LB ip for argocd... check in the output of this file for the ip
+#   ]
 
 
-  # ✅ UPDATED CONFIGURATION FOR LOAD BALANCER
-  values = [
-    yamlencode({
-      server = {
-        service = {
-          # CHANGE THIS: Switch from NodePort to LoadBalancer
-          type = "LoadBalancer"
+#   # Configuration & this is helm value overriding 
+#   # we are exposing the argocd with cluster ip cause we are using port forwarding to access it
+#   # set {
+#   #   name  = "server.service.type"
+#   #   value = "ClusterIP" # We will use Port Forwarding to access it
+#   # }
 
-          ### Added the below part to get that static LB ip for argocd...
-          loadBalancerIP = google_compute_address.argocd_static_ip.address
+#   # # Disable HA for now to save resources (optional)
+#   # set {
+#   #   name  = "server.replicas"
+#   #   value = "1"
+#   # }
 
-          # You can remove the 'nodePorts' section now, or keep it. 
-          # The LoadBalancer will automatically assign the external IP.
-        }
-        replicas = 1
-      }
-    })
-  ]
-}
+#   ## the above throwed up a error using the set, so changed to bewlo ok 
+#   # values = [
+#   #   yamlencode({
+#   #     server = {
+#   #       service = {
+#   #         type = "ClusterIP"
+#   #       }
+#   #       replicas = 1 # Run only 1 pod to save money
+#   #     }
+#   #   })
+#   # ]
 
 
-# Reserve static IP for ArgoCD LoadBalancer
-resource "google_compute_address" "argocd_static_ip" {
-  name         = "argocd-static-ip"
-  region       = "us-central1"
-  address_type = "EXTERNAL"
-  description  = "Static IP for ArgoCD LoadBalancer"
-}
-# Output the IP for reference
-output "argocd_static_ip" {
-  value       = google_compute_address.argocd_static_ip.address
-  description = "Static IP address for ArgoCD"
-}
+#   # # ✅ UPDATED CONFIGURATION
+#   # values = [
+#   #   yamlencode({
+#   #     server = {
+#   #       service = {
+#   #         # Change type to NodePort
+#   #         type = "NodePort"
+#   #         # Define specific ports so they don't change randomly
+#   #         nodePorts = {
+#   #           http  = 30080
+#   #           https = 30443
+#   #         }
+#   #       }
+#   #       replicas = 1
+#   #     }
+#   #   })
+#   # ]
+
+
+#   # ✅ UPDATED CONFIGURATION FOR LOAD BALANCER
+#   values = [
+#     yamlencode({
+#       server = {
+#         service = {
+#           # CHANGE THIS: Switch from NodePort to LoadBalancer
+#           type = "LoadBalancer"
+
+#           ### Added the below part to get that static LB ip for argocd...
+#           loadBalancerIP = google_compute_address.argocd_static_ip.address
+
+#           # You can remove the 'nodePorts' section now, or keep it. 
+#           # The LoadBalancer will automatically assign the external IP.
+#         }
+#         replicas = 1
+#       }
+#     })
+#   ]
+# }
+
+
+# # Reserve static IP for ArgoCD LoadBalancer
+# resource "google_compute_address" "argocd_static_ip" {
+#   name         = "argocd-static-ip"
+#   region       = "us-central1"
+#   address_type = "EXTERNAL"
+#   description  = "Static IP for ArgoCD LoadBalancer"
+# }
+# # Output the IP for reference
+# output "argocd_static_ip" {
+#   value       = google_compute_address.argocd_static_ip.address
+#   description = "Static IP address for ArgoCD"
+# }

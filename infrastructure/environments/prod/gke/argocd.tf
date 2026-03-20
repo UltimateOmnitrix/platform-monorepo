@@ -34,6 +34,10 @@ resource "helm_release" "argocd" {
   chart      = "argo-cd"
   version    = "5.46.7" # Stable version
 
+  # ADD THESE TWO LINES TO FIX THE ERROR:
+  replace         = true
+  cleanup_on_fail = true
+
   # this tells k8 namespace to install where terraform created namespace
   # as metadata is actually a list of objects, we are using index 0 to get the name
   namespace = kubernetes_namespace_v1.argocd.metadata[0].name

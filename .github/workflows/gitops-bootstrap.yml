@@ -39,7 +39,7 @@ jobs:
               uses: google-github-actions/auth@v2
               with:
                   workload_identity_provider: "${{ vars.WIF_PROVIDER_ID }}"
-                  service_account: "platform-sa@${{ env.PROJECT_ID }}.iam.gserviceaccount.com"
+                  service_account: "githubactions-prodaccount@${{ env.PROJECT_ID }}.iam.gserviceaccount.com"
 
             # 2. Connect to the GKE Cluster
             - name: Get GKE Credentials

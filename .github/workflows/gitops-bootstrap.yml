@@ -17,7 +17,7 @@ on:
             - completed
 
 env:
-    PROJECT_ID: "platformproject-481722"
+    PROJECT_ID: "prodaccount"
     CLUSTER_NAME: "omnitrix-cluster" # Must match your Terraform var
     REGION: "us-central1-a"
 

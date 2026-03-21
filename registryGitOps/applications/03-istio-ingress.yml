@@ -19,6 +19,8 @@ spec:
       values: |
         service:
           type: ClusterIP
+        image:
+          tag: 1.27.0
   destination:
     server: https://kubernetes.default.svc
     namespace: istio-system

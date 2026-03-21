@@ -42,7 +42,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: backstage-pg-secret
-                  key: endpoint
+                  key: publicIP
             - name: POSTGRES_PORT
               value: "5432"
             - name: POSTGRES_USER

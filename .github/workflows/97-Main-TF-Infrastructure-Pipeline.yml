@@ -78,7 +78,7 @@ jobs:
           terraform apply -auto-approve -var-file="prod.tfvars"
 
       # --- STEP 3: GKE Cluster ---
-      # (This only runs after VPC is finished)
+      # (This only runs after VPC is finished) HI THIS IS TESTIng
       - name: "GKE: Init & Plan"
         run: |
           cd infrastructure/environments/prod/gke

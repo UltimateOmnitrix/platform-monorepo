@@ -12,7 +12,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/canary-demo    # e.g. ultimateomnitrix/platform-monorepo/canary-demo
+  IMAGE_NAME: ultimateomnitrix/platform-monorepo/canary-demo    # must be lowercase for Docker tags
 
 jobs:
   build-and-push:

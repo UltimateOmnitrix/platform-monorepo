@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: canary-demo-stable
+  namespace: canary-demo
+  labels:
+    app: canary-demo
+    version: stable
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: canary-demo
+      version: stable
+  template:
+    metadata:
+      labels:
+        app: canary-demo
+        version: stable
+    spec:
+      containers:
+        - name: canary-demo
+          image: ghcr.io/ultimateomnitrix/platform-monorepo/canary-demo:stable
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 50m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi

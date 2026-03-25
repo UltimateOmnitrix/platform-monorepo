@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: canary-demo
+  namespace: canary-demo
+  labels:
+    app: canary-demo
+spec:
+  selector:
+    app: canary-demo          # selects BOTH stable and canary pods
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80

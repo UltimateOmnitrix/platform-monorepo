@@ -1,0 +1,23 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: canary-demo
+  namespace: canary-demo
+spec:
+  hosts:
+    - canary-demo                                        # short name (within namespace)
+    - canary-demo.canary-demo.svc.cluster.local          # FQDN
+  http:
+    - route:
+        - destination:
+            host: canary-demo.canary-demo.svc.cluster.local
+            subset: stable
+            port:
+              number: 80
+          weight: 90        # 90% of traffic → stable
+        - destination:
+            host: canary-demo.canary-demo.svc.cluster.local
+            subset: canary
+            port:
+              number: 80
+          weight: 10        # 10% of traffic → canary

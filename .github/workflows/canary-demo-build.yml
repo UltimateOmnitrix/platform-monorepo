@@ -1,0 +1,65 @@
+## Canary Demo — Build & Push to GitHub Container Registry (GHCR)
+## Triggers when files inside canary-demo/ change on main
+
+name: "Canary Demo — Build & Push Images"
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "canary-demo/**"
+  workflow_dispatch:          # allow manual trigger
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/canary-demo    # e.g. ultimateomnitrix/platform-monorepo/canary-demo
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write         # required for GHCR push
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # ── Login to GitHub Container Registry ──
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── Build & Push — STABLE image ──
+      - name: Build & Push Stable Image
+        uses: docker/build-push-action@v5
+        with:
+          context: canary-demo
+          file: canary-demo/Dockerfile
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:stable
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      # ── Build & Push — CANARY image ──
+      - name: Build & Push Canary Image
+        uses: docker/build-push-action@v5
+        with:
+          context: canary-demo
+          file: canary-demo/Dockerfile.canary
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:canary
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:canary-${{ github.sha }}
+
+      - name: Summary
+        run: |
+          echo "### 🚀 Images pushed to GHCR" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Tag | Image |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| stable | \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:stable\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| canary | \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:canary\` |" >> $GITHUB_STEP_SUMMARY

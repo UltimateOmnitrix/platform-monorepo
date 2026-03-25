@@ -1,15 +1,14 @@
+## External traffic — via Istio Gateway (accepts any Host header)
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: canary-demo
+  name: canary-demo-external
   namespace: canary-demo
 spec:
   hosts:
-    - canary-demo                                        # short name (within namespace)
-    - canary-demo.canary-demo.svc.cluster.local          # FQDN
+    - "*"
   gateways:
-    - canary-demo-gateway                                # external traffic via Istio Gateway
-    - mesh                                               # internal mesh traffic (pod-to-pod)
+    - canary-demo-gateway
   http:
     - route:
         - destination:
@@ -17,10 +16,37 @@ spec:
             subset: stable
             port:
               number: 80
-          weight: 90        # 90% of traffic → stable
+          weight: 90
         - destination:
             host: canary-demo.canary-demo.svc.cluster.local
             subset: canary
             port:
               number: 80
-          weight: 10        # 10% of traffic → canary
+          weight: 10
+---
+## Internal mesh traffic — pod-to-pod within the cluster
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: canary-demo-mesh
+  namespace: canary-demo
+spec:
+  hosts:
+    - canary-demo
+    - canary-demo.canary-demo.svc.cluster.local
+  gateways:
+    - mesh
+  http:
+    - route:
+        - destination:
+            host: canary-demo.canary-demo.svc.cluster.local
+            subset: stable
+            port:
+              number: 80
+          weight: 90
+        - destination:
+            host: canary-demo.canary-demo.svc.cluster.local
+            subset: canary
+            port:
+              number: 80
+          weight: 10

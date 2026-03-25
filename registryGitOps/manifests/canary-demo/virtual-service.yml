@@ -16,13 +16,13 @@ spec:
             subset: stable
             port:
               number: 80
-          weight: 90
+          weight: 50
         - destination:
             host: canary-demo.canary-demo.svc.cluster.local
             subset: canary
             port:
               number: 80
-          weight: 10
+          weight: 50
 ---
 ## Internal mesh traffic — pod-to-pod within the cluster
 apiVersion: networking.istio.io/v1beta1
@@ -43,10 +43,10 @@ spec:
             subset: stable
             port:
               number: 80
-          weight: 90
+          weight: 50
         - destination:
             host: canary-demo.canary-demo.svc.cluster.local
             subset: canary
             port:
               number: 80
-          weight: 10
+          weight: 50

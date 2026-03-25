@@ -1,0 +1,15 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: canary-demo-gateway
+  namespace: canary-demo
+spec:
+  selector:
+    istio: ingressgateway           # matches the istio ingress gateway pods in istio-system
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*"                       # accept all hosts (use a real domain in production)

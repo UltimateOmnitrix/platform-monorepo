@@ -7,6 +7,10 @@ spec:
   hosts:
     - canary-demo                                        # short name (within namespace)
     - canary-demo.canary-demo.svc.cluster.local          # FQDN
+    - "*"                                                # external traffic (any host)
+  gateways:
+    - canary-demo-gateway                                # external traffic via Istio Gateway
+    - mesh                                               # internal mesh traffic (pod-to-pod)
   http:
     - route:
         - destination:

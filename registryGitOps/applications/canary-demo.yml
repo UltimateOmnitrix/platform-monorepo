@@ -1,24 +1,24 @@
-# apiVersion: argoproj.io/v1alpha1
-# kind: Application
-# metadata:
-#   name: canary-demo
-#   namespace: argocd
-#   finalizers:
-#     - resources-finalizer.argocd.argoproj.io
-#   annotations:
-#     argocd.argoproj.io/sync-wave: "5" # After Istio config (Wave 4)
-# spec:
-#   project: default
-#   source:
-#     repoURL: https://github.com/UltimateOmnitrix/platform-monorepo.git
-#     targetRevision: main
-#     path: registryGitOps/manifests/canary-demo
-#   destination:
-#     server: https://kubernetes.default.svc
-#     namespace: canary-demo
-#   syncPolicy:
-#     automated:
-#       prune: true
-#       selfHeal: true
-#     syncOptions:
-#       - CreateNamespace=true
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: canary-demo
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "5" # After Istio config (Wave 4)
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/UltimateOmnitrix/platform-monorepo.git
+    targetRevision: main
+    path: registryGitOps/manifests/canary-demo
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: canary-demo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

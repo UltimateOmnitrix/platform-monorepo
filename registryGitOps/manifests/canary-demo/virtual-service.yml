@@ -43,10 +43,10 @@ spec:
             subset: stable
             port:
               number: 80
-          weight: 50
+          weight: 90
         - destination:
             host: canary-demo.canary-demo.svc.cluster.local
             subset: canary
             port:
               number: 80
-          weight: 50
+          weight: 5

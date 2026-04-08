@@ -1,0 +1,9 @@
+# Sandbox: ${{ values.sandbox_name }}
+# Created by: Omnitrix Developer Portal
+owner_email: ${{ values.owner_email }}
+region: ${{ values.region }}
+services:
+  - storage.googleapis.com
+labels:
+  environment: sandbox
+  managed_by: backstage

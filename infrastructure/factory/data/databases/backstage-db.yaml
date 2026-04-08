@@ -1,0 +1,5 @@
+version: POSTGRES_17
+region: us-central1
+tier: db-g1-small
+username: backstage-user
+password: omnitrix-secret-123

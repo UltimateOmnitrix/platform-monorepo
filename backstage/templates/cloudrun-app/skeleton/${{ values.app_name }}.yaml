@@ -1,0 +1,6 @@
+# Cloud Run Application: ${{ values.app_name }}
+# Created by: Omnitrix Developer Portal
+sandbox: ${{ values.sandbox_ref }}
+environment: ${{ values.environment }}
+region: ${{ values.region }}
+image: us-docker.pkg.dev/cloudrun/container/hello

@@ -57,8 +57,9 @@ spec:
       name: Rename Catalog Info
       action: fs:rename
       input:
-        from: infrastructure/factory/data/sandboxes/catalog-info.yaml
-        to: infrastructure/factory/data/sandboxes/${{ parameters.sandbox_name }}.catalog.yaml
+        files:
+          - from: infrastructure/factory/data/sandboxes/catalog-info.yaml
+            to: infrastructure/factory/data/sandboxes/${{ parameters.sandbox_name }}.catalog.yaml
 
     - id: publish
       name: Create Pull Request

@@ -47,7 +47,7 @@ output "database_instances" {
 # This section "bridges" the infrastructure to the app.
 # It creates the secrets that Backstage is looking for.
 
-resource "kubernetes_secret" "db_connectivity" {
+resource "kubernetes_secret_v1" "db_connectivity" {
   for_each = local.databases
 
   metadata {
@@ -65,7 +65,7 @@ resource "kubernetes_secret" "db_connectivity" {
   type = "Opaque"
 }
 
-resource "kubernetes_secret" "db_password" {
+resource "kubernetes_secret_v1" "db_password" {
   for_each = local.databases
 
   metadata {

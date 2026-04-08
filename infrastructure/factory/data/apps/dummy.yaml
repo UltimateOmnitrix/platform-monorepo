@@ -1,0 +1,6 @@
+# Cloud Run Application: dummy
+# Created by: Omnitrix Developer Portal
+sandbox: resource:default/justcreating
+environment: dev
+region: us-central1
+image: us-docker.pkg.dev/cloudrun/container/hello

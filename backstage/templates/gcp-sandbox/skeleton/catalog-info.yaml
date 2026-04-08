@@ -1,0 +1,16 @@
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: ${{ values.sandbox_name }}
+  description: "GCP Sandbox Environment: ${{ values.sandbox_name }}"
+  tags:
+    - gcp
+    - sandbox
+    - factory-managed
+  annotations:
+    backstage.io/managed-by-location: url:https://github.com/UltimateOmnitrix/platform-monorepo/blob/main/infrastructure/factory/data/sandboxes/${{ values.sandbox_name }}.yaml
+    backstage.io/managed-by-origin-location: url:https://github.com/UltimateOmnitrix/platform-monorepo/blob/main/infrastructure/factory/data/sandboxes/${{ values.sandbox_name }}.yaml
+spec:
+  type: gcp-sandbox
+  owner: platform-team
+  system: omnitrix-platform

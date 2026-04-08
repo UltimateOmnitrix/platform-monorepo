@@ -97,6 +97,8 @@ spec:
                   target: https://github.com/UltimateOmnitrix/platform-monorepo/blob/main/backstage/templates/gcp-sandbox/template.yml
                 - type: url
                   target: https://github.com/UltimateOmnitrix/platform-monorepo/blob/main/backstage/templates/cloudrun-app/template.yml
+                - type: github-discovery
+                  target: https://github.com/UltimateOmnitrix/platform-monorepo/blob/main/infrastructure/factory/data/sandboxes/*.catalog.yaml
 
   destination:
     server: https://kubernetes.default.svc

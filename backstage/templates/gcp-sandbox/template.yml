@@ -53,6 +53,13 @@ spec:
           owner_email: ${{ parameters.owner_email }}
           region: ${{ parameters.region }}
 
+    - id: rename-catalog
+      name: Rename Catalog Info
+      action: fs:rename
+      input:
+        from: infrastructure/factory/data/sandboxes/catalog-info.yaml
+        to: infrastructure/factory/data/sandboxes/${{ parameters.sandbox_name }}.catalog.yaml
+
     - id: publish
       name: Create Pull Request
       action: publish:github:pull-request

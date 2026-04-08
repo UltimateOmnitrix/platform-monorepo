@@ -1,0 +1,13 @@
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: justcreating
+  description: "GCP Sandbox Environment: justcreating"
+  tags:
+    - gcp
+    - sandbox
+    - factory-managed
+spec:
+  type: gcp-sandbox
+  owner: platform-team
+  system: omnitrix-platform

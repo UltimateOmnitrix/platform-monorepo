@@ -30,6 +30,15 @@ spec:
           title: Related Sandbox Name
           type: string
           description: Which sandbox this belongs to (for grouping)
+          ui:field: EntityPicker
+          ui:options:
+            allowedKinds:
+              - Resource
+            defaultKind: Resource
+            filter:
+              apiVersion: backstage.io/v1alpha1
+              kind: Resource
+              spec.type: gcp-sandbox
         environment:
           title: Environment
           type: string

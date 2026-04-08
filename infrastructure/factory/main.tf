@@ -55,7 +55,7 @@ resource "google_storage_bucket" "sandbox" {
 
   labels = {
     environment = "sandbox"
-    owner       = replace(lookup(each.value, "owner_email", "unknown"), "@", "-at-")
+    owner       = replace(replace(lookup(each.value, "owner_email", "unknown"), "@", "-at-"), ".", "-")
     managed_by  = "backstage"
     sandbox     = each.key
   }

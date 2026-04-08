@@ -1,0 +1,9 @@
+# Sandbox: justcreating
+# Created by: Omnitrix Developer Portal
+owner_email: sarany1947@gmail.com
+region: US
+services:
+  - storage.googleapis.com
+labels:
+  environment: sandbox
+  managed_by: backstage

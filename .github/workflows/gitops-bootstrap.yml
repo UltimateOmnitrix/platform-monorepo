@@ -9,12 +9,15 @@
 
 name: "98 - GitOps - Bootstrap ArgoCD"
 
+# on:
+#     workflow_dispatch: # Allows you to click "Run" manually
+#     workflow_run: # Runs automatically when Infra finishes successfully
+#         workflows: ["Main-TF-Infrastructure-Pipeline"]
+#         types:
+#             - completed
+
 on:
-    workflow_dispatch: # Allows you to click "Run" manually
-    workflow_run: # Runs automatically when Infra finishes successfully
-        workflows: ["Main-TF-Infrastructure-Pipeline"]
-        types:
-            - completed
+    workflow_dispatch:
 
 env:
     PROJECT_ID: "prodaccount"
